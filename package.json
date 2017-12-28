@@ -1,11 +1,12 @@
 {
-  "name": "kaunet_base",
+  "name": "gulp_base",
   "version": "1.0.0",
   "description": "n/a",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "gulp"
+    "start" : "gulp",
+    "build" : "gulp production"
   },
   "author": "",
   "license": "ISC",
