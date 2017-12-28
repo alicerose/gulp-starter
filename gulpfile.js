@@ -1,6 +1,8 @@
 var gulp         = require('gulp');
 var ejs          = require('gulp-ejs');
 var rename       = require('gulp-rename');
+var del          = require('del');
+var sequence     = require('run-sequence');
 //var path       = require('path');
 var sass         = require("gulp-sass");
 var sourcemaps   = require('gulp-sourcemaps');
@@ -31,7 +33,7 @@ gulp.task('server', function() {
 
 // ejsコンパイル
 gulp.task("ejs", function() {
-    gulp.src(["src/ejs/**/*.ejs",'!' + "src/ejs/**/_*.ejs"])
+    return gulp.src(["src/ejs/**/*.ejs",'!' + "src/ejs/**/_*.ejs"])
     // 書式エラーがあっても動作停止しない
     .pipe(plumber({
         errorHandler: notify.onError("Error: <%= error.message %>")
@@ -42,7 +44,7 @@ gulp.task("ejs", function() {
 
 // sassコンパイル
 gulp.task("scss", function() {
-    gulp.src("src/scss/**/*.scss")
+    return gulp.src("src/scss/**/*.scss")
     // 書式エラーがあっても動作停止しない
     .pipe(plumber({
         errorHandler: notify.onError("Error: <%= error.message %>")
@@ -66,7 +68,7 @@ gulp.task("scss", function() {
 // js圧縮
 gulp.task("js", function() {
 
-    gulp.src(["src/js/**/*.js","!src/js/lib/*.js"])
+    return gulp.src(["src/js/**/*.js","!src/js/lib/*.js"])
     .pipe(uglify())
     .pipe(gulp.dest("./dist/js"));
     // libディレクトリのライブラリは何もせずそのまま移動
@@ -99,6 +101,18 @@ gulp.task('imagemin', function(){
 // ライブリロード（自動更新）
 gulp.task('reload', function () {
     browserSync.reload();
+});
+
+// distの掃除
+gulp.task('clean', function() {
+  del(['dist']);
+  console.log('Removed current distribution files.');
+});
+
+gulp.task('rebuild', () => {
+    sequence(
+        ['clean', 'ejs', 'scss', 'imagemin', 'js']
+    )
 });
 
 // 標準タスクに登録するジョブ
