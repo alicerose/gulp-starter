@@ -1,5 +1,6 @@
 var gulp         = require('gulp');
 var ejs          = require('gulp-ejs');
+var rename       = require('gulp-rename');
 //var path       = require('path');
 var sass         = require("gulp-sass");
 var sourcemaps   = require('gulp-sourcemaps');
@@ -35,7 +36,7 @@ gulp.task("ejs", function() {
     .pipe(plumber({
         errorHandler: notify.onError("Error: <%= error.message %>")
     }))
-    .pipe(ejs())
+    .pipe(ejs({}, {}, {"ext": ".html"}))
     .pipe(gulp.dest("dist/"))
 });
 
