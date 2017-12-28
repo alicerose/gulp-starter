@@ -105,13 +105,13 @@ gulp.task('reload', function () {
 
 // distの掃除
 gulp.task('clean', function() {
-  del(['dist']);
-  console.log('Removed current distribution files.');
+  return del(['dist']);
 });
 
-gulp.task('rebuild', () => {
+// 全てをビルドする（初回・clean後用）
+gulp.task('build', () => {
     sequence(
-        ['clean', 'ejs', 'scss', 'imagemin', 'js']
+        ['ejs', 'scss', 'imagemin', 'js']
     )
 });
 
