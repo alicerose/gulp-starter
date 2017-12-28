@@ -1,0 +1,1 @@
+{"version":3,"sources":["styles.scss"],"names":[],"mappings":"AAAA,UAAU;AAEV;EACE,+BAAuB;UAAvB,uBAAuB;CACxB","file":"../scss/styles.css","sourcesContent":["/* test */\r\n\r\n* {\r\n  box-sizing : border-box;\r\n}"]}
