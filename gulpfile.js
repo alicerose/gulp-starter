@@ -43,7 +43,7 @@ gulp.task("ejs", function() {
 });
 
 // sassコンパイル
-gulp.task("scss", function() {
+gulp.task("sass", function() {
     return gulp.src("src/scss/**/*.scss")
     // 書式エラーがあっても動作停止しない
     .pipe(plumber({
@@ -51,7 +51,9 @@ gulp.task("scss", function() {
     }))
     // sourcemapを出力するようにする
     .pipe(sourcemaps.init())
-    // sassコンパイル
+    // sassコンパイル、方式指定
+    // expanded   : 展開
+    // compressed : 圧縮
     .pipe(sass({outputStyle: 'expanded'}))
     .pipe(postcss([
         // ベンダープレフィックス付与 対象： http://browserl.ist/?q=last+2+versions%2C+ie+%3E%3D+8%2C+iOS+%3E%3D+9
@@ -119,7 +121,7 @@ gulp.task('build', () => {
 gulp.task('default', ['server'], function() {
     gulp.watch(['src/ejs/**/*.*'],["ejs"]);
     gulp.watch(['src/images/**/*.*'],["imagemin"]);
-    gulp.watch(['src/scss/**/*.scss'],["scss"]);
+    gulp.watch(['src/scss/**/*.scss'],["sass"]);
     gulp.watch(['src/js/**/*.js'],["js"]);
     gulp.watch(['dist/**/*'], ['reload']);
 });
