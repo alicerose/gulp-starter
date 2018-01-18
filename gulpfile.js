@@ -3,7 +3,6 @@ var ejs          = require('gulp-ejs');
 var rename       = require('gulp-rename');
 var del          = require('del');
 var sequence     = require('run-sequence');
-//var path       = require('path');
 var sass         = require("gulp-sass");
 var sourcemaps   = require('gulp-sourcemaps');
 var postcss      = require('gulp-postcss');
@@ -16,13 +15,6 @@ var uglify       = require('gulp-uglify');
 var imagemin     = require("gulp-imagemin");
 var pngquant     = require("imagemin-pngquant");
 var mozjpeg      = require('imagemin-mozjpeg');
-
-/*
-var paths = {
-    srcDir : 'src',
-    dstDir : 'dist'
-}
-*/
 
 // 開発用サーバをローカルに立ち上げる
 gulp.task('server', function() {
@@ -119,9 +111,9 @@ gulp.task('build', () => {
 
 // 標準タスクに登録するジョブ
 gulp.task('default', ['server'], function() {
-    gulp.watch(['src/ejs/**/*.*'],["ejs"]);
-    gulp.watch(['src/images/**/*.*'],["imagemin"]);
-    gulp.watch(['src/scss/**/*.scss'],["sass"]);
-    gulp.watch(['src/js/**/*.js'],["js"]);
-    gulp.watch(['dist/**/*'], ['reload']);
+    gulp.watch(['src/ejs/**/*.*'],["ejs"]).on('change', browserSync.reload);
+    gulp.watch(['src/images/**/*.*'],["imagemin"]).on('change', browserSync.reload);
+    gulp.watch(['src/scss/**/*.scss'],["sass"]).on('change', browserSync.reload);
+    gulp.watch(['src/js/**/*.js'],["js"]).on('change', browserSync.reload);
+    gulp.watch(['dist/**/*'], ['reload']).on('change', browserSync.reload);
 });
