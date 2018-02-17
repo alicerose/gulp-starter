@@ -1,10 +1,12 @@
 @charset "UTF-8";
 
+//vender
+@import "vender/_normalize";
+
 //foundation
 @import "foundation/_variables";
 @import "foundation/_functions";
 @import "foundation/_mixins";
-@import "foundation/_normalize";
 @import "foundation/_base";
 
 //utility

@@ -1,10 +1,37 @@
+// opacity(with IE prefix)
+// @include opacity(0.5); // opacity: 0.5;
+
 @mixin opacity($opacity) {
    opacity: $opacity;
    $opacityIE: $opacity * 100;
    filter: alpha(opacity=$opacityIE);
 }
 
+// fontsize(supports rem, wip)
+// @include fontsize(16); // font-size: 16px;font-size: 1rem;
+
 @mixin fontsize($size: 24, $base: 16) {
   font-size: $size + px;
   font-size: ($size / $base) * 1rem;
+}
+
+// media queries
+// 第一引数省略時       : 640px
+// 第二引数省略時の挙動 : max-width
+// 第二引数にmin        : min-width
+// 第二引数がminの場合、第一引数に+1される
+// .hoge {
+//   @include mq {} // @media screen and (max-width: 640px) {}
+//   @include mq(min) {} // @media screen and (min-width: 641px) {}
+//   @include mq(min, 1000){} // @media screen and (min-width: 1001px) {}
+// }
+
+@mixin mq($refer: max, $screen: 640){
+  $width: $screen;
+  @if($refer == min) {
+    $width: $screen + 1;
+  }
+  @media screen and (#{$refer}-width: #{$width}px) {
+    @content;
+  }
 }

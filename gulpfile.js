@@ -63,7 +63,8 @@ gulp.task("sass", function() {
 gulp.task("js", function() {
 
     return gulp.src(["src/js/**/*.js","!src/js/lib/*.js"])
-    .pipe(uglify())
+    // 圧縮するならコメントアウト解除
+    //.pipe(uglify())
     .pipe(gulp.dest("./dist/js"));
     // libディレクトリのライブラリは何もせずそのまま移動
     gulp.src(["src/js/lib/*.js"])
@@ -111,9 +112,9 @@ gulp.task('build', () => {
 
 // 標準タスクに登録するジョブ
 gulp.task('default', ['server'], function() {
-    gulp.watch(['src/ejs/**/*.*'],["ejs"]).on('change', browserSync.reload);
-    gulp.watch(['src/images/**/*.*'],["imagemin"]).on('change', browserSync.reload);
-    gulp.watch(['src/scss/**/*.scss'],["sass"]).on('change', browserSync.reload);
-    gulp.watch(['src/js/**/*.js'],["js"]).on('change', browserSync.reload);
+    gulp.watch(['src/ejs/**/*.*'],["ejs"]);
+    gulp.watch(['src/images/**/*.*'],["imagemin"]);
+    gulp.watch(['src/scss/**/*.scss'],["sass"]);
+    gulp.watch(['src/js/**/*.js'],["js"]);
     gulp.watch(['dist/**/*'], ['reload']).on('change', browserSync.reload);
 });
