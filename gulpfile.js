@@ -73,6 +73,7 @@ gulp.task("js", function() {
   return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
   // 圧縮するならコメントアウト解除
   //.pipe($.uglify())
+  //.pipe($.rename({extname: '.min.js'}))
   .pipe(gulp.dest(dir.dist+'js'))
   // ブラウザを更新する
   .pipe(browser.stream());
