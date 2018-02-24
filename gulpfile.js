@@ -1,120 +1,114 @@
-var gulp         = require('gulp');
-var ejs          = require('gulp-ejs');
-var rename       = require('gulp-rename');
-var del          = require('del');
-var sequence     = require('run-sequence');
-var sass         = require("gulp-sass");
-var sourcemaps   = require('gulp-sourcemaps');
-var postcss      = require('gulp-postcss');
-var autoprefixer = require("gulp-autoprefixer");
-var mqpacker     = require('css-mqpacker');
-var browserSync  = require('browser-sync');
-var plumber      = require('gulp-plumber');
-var notify       = require('gulp-notify');
-var uglify       = require('gulp-uglify');
-var imagemin     = require("gulp-imagemin");
-var pngquant     = require("imagemin-pngquant");
-var mozjpeg      = require('imagemin-mozjpeg');
+var gulp    = require('gulp');
+var $ = require('gulp-load-plugins')({
+  pattern: [
+    'gulp-*',
+    'autoprefixer',
+    'css-mqpacker'
+  ]
+});
+
+var browser = require('browser-sync').create();
+
+// ディレクトリ
+var dir = {
+  src  : 'src/',
+  dist : 'dist/'
+}
 
 // 開発用サーバをローカルに立ち上げる
 gulp.task('server', function() {
-    browserSync.init({
-        server: {baseDir: 'dist'}
-    });
+  browser.init({
+    server: {baseDir: dir.dist}
+  });
 });
 
 // ejsコンパイル
 gulp.task("ejs", function() {
-    return gulp.src(["src/ejs/**/*.ejs",'!' + "src/ejs/**/_*.ejs"])
-    // 書式エラーがあっても動作停止しない
-    .pipe(plumber({
-        errorHandler: notify.onError("Error: <%= error.message %>")
-    }))
-    .pipe(ejs({}, {}, {"ext": ".html"}))
-    .pipe(gulp.dest("dist/"))
+  return gulp.src([dir.src + 'ejs/**/*.ejs','!' + dir.src + '/ejs/**/_*.ejs'])
+  // 書式エラーがあっても動作停止しない
+  .pipe($.plumber({
+    errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
+  // 拡張子をhtmlにする
+  .pipe($.ejs({}, {}, {"ext": ".html"}))
+  // 出力先ディレクトリ
+  .pipe(gulp.dest(dir.dist))
+  // ブラウザを更新する
+  .pipe(browser.stream());
 });
 
 // sassコンパイル
 gulp.task("sass", function() {
-    return gulp.src("src/scss/**/*.scss")
-    // 書式エラーがあっても動作停止しない
-    .pipe(plumber({
-        errorHandler: notify.onError("Error: <%= error.message %>")
-    }))
-    // sourcemapを出力するようにする
-    .pipe(sourcemaps.init())
-    // sassコンパイル、方式指定
-    // expanded   : 展開
-    // compressed : 圧縮
-    .pipe(sass({outputStyle: 'expanded'}))
-    .pipe(postcss([
-        // ベンダープレフィックス付与 対象： http://browserl.ist/?q=last+2+versions%2C+ie+%3E%3D+8%2C+iOS+%3E%3D+9
-        require('autoprefixer')({browsers: 'last 2 versions, ie >= 7, iOS >= 9'}),
-        // メディアクエリの整理
-        require('css-mqpacker')
-    ]))
-    // sourcemap出力先
-    .pipe(sourcemaps.write('../maps'))
-    // 出力先ディレクトリ
-    .pipe(gulp.dest("./dist/css"));
+  var plugins = [
+    // ベンダープレフィックス付与 対象： http://browserl.ist/?q=last+2+versions%2C+ie+%3E%3D+8%2C+iOS+%3E%3D+9
+    $.autoprefixer({browsers: 'last 2 versions, ie >= 7, iOS >= 9'}),
+    // メディアクエリの整理
+    $.cssMqpacker({sort: true})
+  ];
+  return gulp.src([dir.src + 'scss/**/*.scss'])
+  // 書式エラーがあっても動作停止しない
+  .pipe($.plumber({
+      errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
+  // sourcemapを出力するようにする
+  .pipe($.sourcemaps.init())
+  // sassコンパイル、方式指定
+  // expanded   : 展開
+  // compressed : 圧縮
+  .pipe($.sass({outputStyle: 'expanded'}))
+  // css整形
+  .pipe($.postcss(plugins))
+  .pipe($.csscomb())
+  // sourcemap出力先
+  // css出力先からの相対パスで書く
+  .pipe($.sourcemaps.write('../maps'))
+  // 出力先ディレクトリ
+  .pipe(gulp.dest(dir.dist+'css'))
+  // ブラウザを更新する
+  .pipe(browser.stream());
 });
 
 // js圧縮
 gulp.task("js", function() {
+  return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
+  // 圧縮するならコメントアウト解除
+  //.pipe($.uglify())
+  .pipe(gulp.dest(dir.dist+'js'))
+  // ブラウザを更新する
+  .pipe(browser.stream());
+});
 
-    return gulp.src(["src/js/**/*.js","!src/js/lib/*.js"])
-    // 圧縮するならコメントアウト解除
-    //.pipe(uglify())
-    .pipe(gulp.dest("./dist/js"));
-    // libディレクトリのライブラリは何もせずそのまま移動
-    gulp.src(["src/js/lib/*.js"])
-    .pipe(gulp.dest("./dist/js/lib"));
+// jsライブラリ移動
+gulp.task('jslib', function() {
+  return gulp.src([
+    dir.src + 'js/lib/*'
+  ])
+  .pipe(gulp.dest(dir.dist + 'js/lib'))
+  // ブラウザを更新する
+  .pipe(browser.stream());
 });
 
 // 画像圧縮
-gulp.task('imagemin', function(){
-    return gulp.src('src/images/*')
-    .pipe(plumber())
-    .pipe(imagemin([
-        pngquant({
-            quality: '65-80',
-            speed: 1,
-            floyd:0
-        }),
-        mozjpeg({
-            quality:85,
-            progressive: true
-        }),
-        imagemin.svgo(),
-        imagemin.optipng(),
-        imagemin.gifsicle()
-        ]
-        ))
-    .pipe(gulp.dest('dist/images'));
+gulp.task('images', function(){
+  return gulp.src([
+    dir.src + 'images/**/*'
+  ])
+  // 画像圧縮処理
+  .pipe($.imagemin())
+  // 出力先ディレクトリ
+  .pipe(gulp.dest(dir.dist + 'images/'))
+  // ブラウザを更新する
+  .pipe(browser.stream());
 });
 
-// ライブリロード（自動更新）
-gulp.task('reload', function () {
-    browserSync.reload();
+// ファイル変更監視
+gulp.task('watch', function() {
+  gulp.watch([dir.src + 'ejs/**/*'], ['ejs']);
+  gulp.watch([dir.src + 'scss/**/*'], ['sass']);
+  gulp.watch([dir.src + 'js/**/*'], ['js']);
+  gulp.watch([dir.src + 'js/lib/*'], ['jslib']);
+  gulp.watch([dir.src + 'images/**/*'], ['images']);
 });
 
-// distの掃除
-gulp.task('clean', function() {
-  return del(['dist']);
-});
-
-// 全てをビルドする（初回・clean後用）
-gulp.task('build', () => {
-    sequence(
-        ['ejs', 'scss', 'imagemin', 'js']
-    )
-});
-
-// 標準タスクに登録するジョブ
-gulp.task('default', ['server'], function() {
-    gulp.watch(['src/ejs/**/*.*'],["ejs"]);
-    gulp.watch(['src/images/**/*.*'],["imagemin"]);
-    gulp.watch(['src/scss/**/*.scss'],["sass"]);
-    gulp.watch(['src/js/**/*.js'],["js"]);
-    gulp.watch(['dist/**/*'], ['reload']).on('change', browserSync.reload);
-});
+// 標準タスク
+gulp.task('default', ['server', 'watch']);

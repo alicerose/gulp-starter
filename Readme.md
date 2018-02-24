@@ -11,7 +11,9 @@
 
 * Install node.js
 * Move to project directory.
-* npm start
+* Install with `npm install`
+* Launch with `npm start`
+* Edit sources
 
 ## What's available?
 

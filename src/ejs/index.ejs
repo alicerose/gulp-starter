@@ -1,7 +1,17 @@
-<% include include/_header %>
+<%
+  var meta = {
+    description : '',
+    title       : 'gulp'
+  };
+%>
+<% include _template %>
+<% function contents() { %>
 
-  <section>
-    <p>test</p>
-  </section>
+    <section>
+      <p>sample</p>
+      <div>
+        <img src="<%= config.imgpath %>/miffy.jpg" alt="">
+      </div>
+    </section>
 
-<% include include/_footer %>
+<% } %>
