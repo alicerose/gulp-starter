@@ -4,15 +4,21 @@ body {
 
 img {
   @include mq {
-    /* type1 */
-    width: 100%;
+    /* type 1 */
+  }
+  @include mq($lg) {
+    /* type 2 */
   }
   @include mq(min) {
-    /* type2 */
-    width: 50%;
+    /* type 3 */
     @include mq($lg) {
-      /* type3 */
-      width: 75%;
+      /* type 4 */
+    }
+  }
+  @include mq(min, $lg) {
+    /* type 5 */
+    @include mq($xl) {
+      /* type 6 */
     }
   }
 }
