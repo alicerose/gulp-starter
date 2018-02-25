@@ -26,12 +26,17 @@
 //   @include mq(min, 1000){} // @media screen and (min-width: 1001px) {}
 // }
 
-@mixin mq($refer: max, $screen: 640){
+@mixin mq($refer: max, $screen: $md){
   $width: $screen;
-  @if($refer == min) {
+  $method: $refer;
+  @if($method == min) {
     $width: $screen + 1;
   }
-  @media screen and (#{$refer}-width: #{$width}px) {
+  @if type-of($refer) == number {
+    $width: $refer;
+    $method: max;
+  }
+  @media screen and (#{$method}-width: #{$width}px) {
     @content;
   }
 }
