@@ -9,6 +9,16 @@ img {
   width: 100%;
   height: auto;
   @include mq{
+  @include mq {
+    /* type1 */
+    width: 100%;
+  }
+  @include mq(min) {
+    /* type2 */
     width: 50%;
+    @include mq($lg) {
+      /* type3 */
+      width: 75%;
+    }
   }
 }

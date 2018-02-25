@@ -446,13 +446,27 @@ body {
 }
 
 img {
-  width: 100%;
   height: auto;
+}
+
+@media screen and (min-width: 641px) {
+  img {
+    /* type2 */
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 641px) and (max-width: 1024px) {
+  img {
+    /* type3 */
+    width: 75%;
+  }
 }
 
 @media screen and (max-width: 640px) {
   img {
-    width: 50%;
+    /* type1 */
+    width: 100%;
   }
 }
 /*# sourceMappingURL=../maps/common.css.map */
