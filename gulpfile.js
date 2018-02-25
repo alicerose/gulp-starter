@@ -79,16 +79,6 @@ gulp.task("js", function() {
   .pipe(browser.stream());
 });
 
-// jsライブラリ移動
-gulp.task('jslib', function() {
-  return gulp.src([
-    dir.src + 'js/lib/*'
-  ])
-  .pipe(gulp.dest(dir.dist + 'js/lib'))
-  // ブラウザを更新する
-  .pipe(browser.stream());
-});
-
 // 画像圧縮
 gulp.task('images', function(){
   return gulp.src([
