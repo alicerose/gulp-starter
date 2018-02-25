@@ -95,7 +95,8 @@ gulp.task('images', function(){
 // コピー（配置するだけのリソース用）
 gulp.task('copy', function(){
   return gulp.src([
-    dir.src + 'resource/**/*'
+    dir.src + 'resource/**/*',
+    dir.src + 'resource/.htaccess'
   ], {
     // コピー元ディレクトリ
     // このディレクトリを起点としてdistへコピーする
