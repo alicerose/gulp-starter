@@ -102,13 +102,28 @@ gulp.task('images', function(){
   .pipe(browser.stream());
 });
 
+// コピー（配置するだけのリソース用）
+gulp.task('copy', function(){
+  return gulp.src([
+    dir.src + 'resource/**/*'
+  ], {
+    // コピー元ディレクトリ
+    // このディレクトリを起点としてdistへコピーする
+    base: dir.src + 'resource'
+  })
+  // 出力先ディレクトリ
+  .pipe(gulp.dest(dir.dist))
+  // ブラウザを更新する
+  .pipe(browser.stream());
+});
+
 // ファイル変更監視
 gulp.task('watch', function() {
   gulp.watch([dir.src + 'ejs/**/*'], ['ejs']);
   gulp.watch([dir.src + 'scss/**/*'], ['sass']);
   gulp.watch([dir.src + 'js/**/*'], ['js']);
-  gulp.watch([dir.src + 'js/lib/*'], ['jslib']);
   gulp.watch([dir.src + 'images/**/*'], ['images']);
+  gulp.watch([dir.src + 'resource/**/*'], ['copy']);
 });
 
 // 標準タスク
