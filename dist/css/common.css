@@ -448,7 +448,6 @@ template {
 }
 
 body {
-  padding: 1em;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', 'Yu Gothic', YuGothic, sans-serif;
   font-variant-numeric: tabular-nums;
   -webkit-font-feature-settings: 'tnum';
@@ -456,17 +455,21 @@ body {
 }
 
 img {
-  width: 100%;
   height: auto;
+  max-width: 100%;
+}
+
+body {
+  padding: 1em;
 }
 
 @media screen and (min-width: 641px) {
+  .utility_sp-only {
+    display: none;
+  }
   img {
     /* type2 */
     width: 50%;
-  }
-  .utility_sp-only {
-    display: none;
   }
 }
 
@@ -478,12 +481,12 @@ img {
 }
 
 @media screen and (max-width: 640px) {
+  .utility_pc-only {
+    display: none;
+  }
   img {
     /* type1 */
     width: 100%;
-  }
-  .utility_pc-only {
-    display: none;
   }
 }
 /*# sourceMappingURL=../maps/common.css.map */

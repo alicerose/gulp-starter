@@ -7,24 +7,11 @@
   box-sizing : border-box;
 }
 body {
-  padding : 1em;
   font-family: $fontfamily;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 img {
-  width: 100%;
   height: auto;
-  @include mq {
-    /* type1 */
-    width: 100%;
-  }
-  @include mq(min) {
-    /* type2 */
-    width: 50%;
-    @include mq($lg) {
-      /* type3 */
-      width: 75%;
-    }
-  }
+  max-width: 100%;
 }
