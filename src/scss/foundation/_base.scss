@@ -1,9 +1,16 @@
+@font-face {
+  font-family: "Yu Gothic";
+  src: local("Yu Gothic Medium");
+  font-weight: 400;
+}
 * {
   box-sizing : border-box;
 }
-
 body {
   padding : 1em;
+  font-family: $fontfamily;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 img {
   width: 100%;

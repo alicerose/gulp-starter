@@ -436,6 +436,12 @@ template {
   display: none;
 }
 
+@font-face {
+  font-family: 'Yu Gothic';
+  src: local('Yu Gothic Medium');
+  font-weight: 400;
+}
+
 * {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -443,6 +449,10 @@ template {
 
 body {
   padding: 1em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', 'Yu Gothic', YuGothic, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-feature-settings: 'tnum';
+          font-feature-settings: 'tnum';
 }
 
 img {
