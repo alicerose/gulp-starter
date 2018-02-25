@@ -456,6 +456,7 @@ body {
 }
 
 img {
+  width: 100%;
   height: auto;
 }
 
@@ -463,6 +464,9 @@ img {
   img {
     /* type2 */
     width: 50%;
+  }
+  .utility_sp-only {
+    display: none;
   }
 }
 
@@ -477,6 +481,9 @@ img {
   img {
     /* type1 */
     width: 100%;
+  }
+  .utility_pc-only {
+    display: none;
   }
 }
 /*# sourceMappingURL=../maps/common.css.map */

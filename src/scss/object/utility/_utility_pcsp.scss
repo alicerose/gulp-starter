@@ -1,0 +1,12 @@
+.utility {
+  &_pc-only {
+    @include mq {
+      display: none;
+    }
+  }
+  &_sp-only {
+    @include mq(min) {
+      display: none;
+    }
+  }
+}
