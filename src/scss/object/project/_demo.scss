@@ -6,14 +6,14 @@ img {
   @include mq {
     /* type 1 */
   }
-  @include mq($lg) {
-    /* type 2 */
-  }
   @include mq(min) {
-    /* type 3 */
+    /* type 2 */
     @include mq($lg) {
-      /* type 4 */
+      /* type 3 */
     }
+  }
+  @include mq($lg) {
+    /* type 4 */
   }
   @include mq(min, $lg) {
     /* type 5 */
