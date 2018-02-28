@@ -8,6 +8,9 @@
     "start": "gulp",
     "build": "gulp production"
   },
+  "browserslist": [
+    "last 2 versions"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

@@ -3,6 +3,10 @@ body {
 }
 
 img {
+  display: none;
+}
+
+.mq_demo {
   @include mq {
     /* type 1 */
   }
