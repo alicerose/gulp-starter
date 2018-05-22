@@ -89,7 +89,9 @@ gulp.task("js", function() {
 // babel
 gulp.task('webpack', function() {
   return webpackStream(webpackConfig, webpack)
-    .pipe(gulp.dest(dir.dist+'js'));
+  .pipe(gulp.dest(dir.dist+'js'))
+  // ブラウザを更新する
+  .pipe(browser.stream());
 });
 
 // 画像圧縮
@@ -131,7 +133,8 @@ gulp.task('clean', function (cb) {
 gulp.task('watch', function() {
   gulp.watch([dir.src + 'ejs/**/*'], ['ejs']);
   gulp.watch([dir.src + 'scss/**/*'], ['sass']);
-  gulp.watch([dir.src + 'js/**/*'], ['js']);
+  //gulp.watch([dir.src + 'js/**/*'], ['js']);
+  gulp.watch([dir.src + 'js/**/*'], ['webpack']);
   gulp.watch([dir.src + 'images/**/*'], ['images']);
   gulp.watch([dir.src + 'resource/**/*'], ['copy']);
 });
