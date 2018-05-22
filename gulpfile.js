@@ -123,7 +123,7 @@ gulp.task('copy', function(){
 
 // distを消去する（再構築用）
 gulp.task('clean', function (cb) {
-  rimraf(dir.dist + '../', cb);
+  rimraf(dir.dist, cb);
 });
 
 
@@ -138,3 +138,6 @@ gulp.task('watch', function() {
 
 // 標準タスク
 gulp.task('default', ['server', 'watch']);
+
+// 再構築
+gulp.task('rebuild', ['clean', 'ejs', 'webpack', 'sass', 'images', 'copy']);
