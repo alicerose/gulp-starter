@@ -1,20 +1,3 @@
-// opacity(with IE prefix)
-// @include opacity(0.5); // opacity: 0.5;
-
-@mixin opacity($opacity) {
-   opacity: $opacity;
-   $opacityIE: $opacity * 100;
-   filter: alpha(opacity=$opacityIE);
-}
-
-// fontsize(supports rem, wip)
-// @include fontsize(16); // font-size: 16px;font-size: 1rem;
-
-@mixin fontsize($size: 24, $base: 16) {
-  font-size: $size + px;
-  font-size: ($size / $base) * 1rem;
-}
-
 // media queries
 // 第一引数省略時       : 640px
 // 第二引数省略時の挙動 : max-width
@@ -38,5 +21,54 @@
   }
   @media screen and (#{$method}-width: #{$width}px) {
     @content;
+  }
+}
+
+// csshack
+@mixin ie11 {
+  @media all and (-ms-high-contrast:none\0) {
+    @content;
+  }
+}
+@mixin edge {
+  @supports (-ms-ime-align: auto) {
+    @content;
+  }
+}
+
+// z-index
+@function z($name) {
+  @return index($z-map, $name);
+}
+
+// placeholder
+@mixin placeholder {
+  &:placeholder-shown {
+    @content;
+  }
+  &::-webkit-input-placeholder {
+    @content;
+  }
+  &:-moz-placeholder {
+    opacity: 1;
+    @content;
+  }
+  &::-moz-placeholder {
+    opacity: 1;
+    @content;
+  }
+  &:-ms-input-placeholder {
+    @content;
+  }
+}
+
+// hover
+@mixin hover($method:opacity, $value:0.7) {
+  transition: #{$method} 300ms ease;
+  backface-visibility: hidden;
+  &:hover {
+    @include mq {
+      #{$method}: $value;
+    }
   }
 }
