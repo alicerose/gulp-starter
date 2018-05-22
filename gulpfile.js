@@ -3,7 +3,10 @@ var $ = require('gulp-load-plugins')({
   pattern: [
     'gulp-*',
     'autoprefixer',
-    'css-mqpacker'
+    'css-mqpacker',
+    'babelify',
+    'browserify',
+    'vinyl-source-stream'
   ]
 });
 
@@ -77,6 +80,19 @@ gulp.task("js", function() {
   .pipe(gulp.dest(dir.dist+'js'))
   // ブラウザを更新する
   .pipe(browser.stream());
+});
+
+// babel
+gulp.task('babel', function() {
+  $.browserify(dir.src + '/js/main.js', { debug: true })
+  .transform($.babelify, {presets: ['es2015']})
+  .bundle()
+  // 書式エラーがあっても動作停止しない
+  .pipe($.plumber({
+      errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
+  .pipe($.vinylSourceStream('scripts.js'))
+  .pipe(gulp.dest(dir.dist+'js'))
 });
 
 // 画像圧縮
