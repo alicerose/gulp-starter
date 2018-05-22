@@ -7,7 +7,14 @@ var $ = require('gulp-load-plugins')({
   ]
 });
 
-var browser = require('browser-sync').create();
+// utility
+var browser        = require('browser-sync').create();
+var rimraf         = require('rimraf');
+
+// webpack
+var webpack        = require('webpack');
+var webpackStream = require('webpack-stream');
+var webpackConfig  = require("./webpack.config");
 
 // ディレクトリ
 var dir = {
@@ -79,6 +86,12 @@ gulp.task("js", function() {
   .pipe(browser.stream());
 });
 
+// babel
+gulp.task('webpack', function() {
+  return webpackStream(webpackConfig, webpack)
+    .pipe(gulp.dest(dir.dist+'js'));
+});
+
 // 画像圧縮
 gulp.task('images', function(){
   return gulp.src([
@@ -107,6 +120,12 @@ gulp.task('copy', function(){
   // ブラウザを更新する
   .pipe(browser.stream());
 });
+
+// distを消去する（再構築用）
+gulp.task('clean', function (cb) {
+  rimraf(dir.dist + '../', cb);
+});
+
 
 // ファイル変更監視
 gulp.task('watch', function() {
