@@ -8,13 +8,14 @@ var $ = require('gulp-load-plugins')({
 });
 
 // utility
-var browser        = require('browser-sync').create();
-var rimraf         = require('rimraf');
+var browser     = require('browser-sync').create();
+var rimraf      = require('rimraf');
+var runSequence = require('run-sequence');
 
 // webpack
-var webpack        = require('webpack');
+var webpack       = require('webpack');
 var webpackStream = require('webpack-stream');
-var webpackConfig  = require("./webpack.config");
+var webpackConfig = require("./webpack.config");
 
 // ディレクトリ
 var dir = {
@@ -143,4 +144,12 @@ gulp.task('watch', function() {
 gulp.task('default', ['server', 'watch']);
 
 // 再構築
-gulp.task('rebuild', ['clean', 'ejs', 'webpack', 'sass', 'images', 'copy']);
+gulp.task('build', function(callback) {
+  runSequence(
+    'clean',
+    ['ejs', 'sass', 'copy'],
+    'images',
+    'webpack',
+    callback
+  );
+});
