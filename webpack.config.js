@@ -1,4 +1,5 @@
-var webpack = require('webpack');
+var webpack  = require('webpack');
+var notifier = require('webpack-notifier');
 
 module.exports = {
   // モード値を production に設定すると最適化された状態で、
@@ -17,7 +18,8 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery'
-    })
+    }),
+    new notifier()
   ],
   module: {
     rules: [
