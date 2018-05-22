@@ -1,4 +1,4 @@
 export default () => {
-  const name = 'ES2016';
+  const name = 'webpack sample';
   console.log(`hello ${name}!!!`);
 };

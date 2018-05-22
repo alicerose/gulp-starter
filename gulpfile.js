@@ -3,14 +3,18 @@ var $ = require('gulp-load-plugins')({
   pattern: [
     'gulp-*',
     'autoprefixer',
-    'css-mqpacker',
-    'babelify',
-    'browserify',
-    'vinyl-source-stream'
+    'css-mqpacker'
   ]
 });
 
-var browser = require('browser-sync').create();
+// utility
+var browser        = require('browser-sync').create();
+var rimraf         = require('rimraf');
+
+// webpack
+var webpack        = require('webpack');
+var webpackStream = require('webpack-stream');
+var webpackConfig  = require("./webpack.config");
 
 // ディレクトリ
 var dir = {
@@ -83,16 +87,9 @@ gulp.task("js", function() {
 });
 
 // babel
-gulp.task('babel', function() {
-  $.browserify(dir.src + '/js/main.js', { debug: true })
-  .transform($.babelify, {presets: ['es2015']})
-  .bundle()
-  // 書式エラーがあっても動作停止しない
-  .pipe($.plumber({
-      errorHandler: $.notify.onError("Error: <%= error.message %>")
-  }))
-  .pipe($.vinylSourceStream('scripts.js'))
-  .pipe(gulp.dest(dir.dist+'js'))
+gulp.task('webpack', function() {
+  return webpackStream(webpackConfig, webpack)
+    .pipe(gulp.dest(dir.dist+'js'));
 });
 
 // 画像圧縮
@@ -123,6 +120,12 @@ gulp.task('copy', function(){
   // ブラウザを更新する
   .pipe(browser.stream());
 });
+
+// distを消去する（再構築用）
+gulp.task('clean', function (cb) {
+  rimraf(dir.dist + '../', cb);
+});
+
 
 // ファイル変更監視
 gulp.task('watch', function() {
