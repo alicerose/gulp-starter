@@ -9,18 +9,32 @@ var $ = require('gulp-load-plugins')({
 
 // utility
 var browser     = require('browser-sync').create();
+var minimist    = require('minimist');
 var rimraf      = require('rimraf');
 var runSequence = require('run-sequence');
 
 // webpack
 var webpack       = require('webpack');
 var webpackStream = require('webpack-stream');
-var webpackConfig = require("./webpack.config");
+
+// environment setting
+var env          = process.env.NODE_ENV;
+var isProduction = (env !== undefined);
+console.log('[Environment]', env, '[isProduction]', isProduction);
 
 // ディレクトリ
-var dir = {
-  src  : 'src/',
-  dist : 'dist/'
+if(isProduction == true){
+  var dir = {
+    src  : 'src/',
+    dist : 'release/'
+  }
+  var webpackConfig = require("./webpack.config.production");
+} else {
+  var dir = {
+    src  : 'src/',
+    dist : 'dist/'
+  }
+  var webpackConfig = require("./webpack.config");
 }
 
 // 開発用サーバをローカルに立ち上げる
@@ -66,10 +80,12 @@ gulp.task("sass", function() {
   .pipe($.sass({outputStyle: 'expanded'}))
   // css整形
   .pipe($.postcss(plugins))
-  .pipe($.csscomb())
+  .pipe($.if(!isProduction, $.csscomb()))
   // sourcemap出力先
   // css出力先からの相対パスで書く
-  .pipe($.sourcemaps.write('../maps'))
+  .pipe($.if(!isProduction, $.sourcemaps.write('../maps')))
+  //本番なら圧縮する
+  .pipe($.if(isProduction, $.cleanCss()))
   // 出力先ディレクトリ
   .pipe(gulp.dest(dir.dist+'css'))
   // ブラウザを更新する
@@ -80,8 +96,8 @@ gulp.task("sass", function() {
 gulp.task("js", function() {
   return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
   .pipe($.changed(dir.dist+'js'))
-  // 圧縮するならコメントアウト解除
-  //.pipe($.uglify())
+  // productionなら圧縮する
+  .pipe($.if(isProduction, $.uglify()))
   //.pipe($.rename({extname: '.min.js'}))
   .pipe(gulp.dest(dir.dist+'js'))
   // ブラウザを更新する
