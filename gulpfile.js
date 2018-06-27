@@ -146,7 +146,6 @@ gulp.task('clean', function (cb) {
   rimraf(dir.dist, cb);
 });
 
-
 // ファイル変更監視
 gulp.task('watch', function() {
   gulp.watch([dir.src + 'ejs/**/*'], ['ejs']);
@@ -158,7 +157,14 @@ gulp.task('watch', function() {
 });
 
 // 標準タスク
-gulp.task('default', ['server', 'watch']);
+gulp.task('default', function(callback) {
+  runSequence(
+    'build',
+    'server',
+    'watch',
+    callback
+  );
+});
 
 // 再構築
 gulp.task('build', function(callback) {
