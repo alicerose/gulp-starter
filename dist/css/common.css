@@ -459,6 +459,60 @@ img {
   max-width: 100%;
 }
 
+[data-overlay] {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: none;
+}
+
+[data-modal] {
+  z-index: 4;
+  pointer-events: none;
+  display: none;
+}
+
+[data-modal].-visible {
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.c_modal_inner {
+  background-color: #ffffff;
+  border-radius: 5px;
+  padding: 1em;
+  pointer-events: auto;
+  opacity: 0;
+  -webkit-transition: all 0.3s ease;
+          transition: all 0.3s ease;
+}
+
+.-visible .c_modal_inner {
+  opacity: 1;
+}
+
+.c_modal_contents {
+  max-width: 50vw;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
 body {
   padding: 1em;
 }
