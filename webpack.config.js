@@ -6,7 +6,7 @@ module.exports = {
   // development に設定するとソースマップ有効でJSファイルが出力される
   mode: 'development',
   // メインとなるJavaScriptファイル（エントリーポイント）
-  entry: './src/js/main.js',
+  entry: './src/webpack/main.js',
   // ファイルの出力設定
   output: {
     //  出力ファイルのディレクトリ名

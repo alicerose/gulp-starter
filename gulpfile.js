@@ -48,15 +48,15 @@ gulp.task("ejs", function() {
 // sassコンパイル
 gulp.task("sass", function() {
   var plugins = [
-    // ベンダープレフィックス付与 対象： http://browserl.ist/?q=last+2+versions%2C+ie+%3E%3D+8%2C+iOS+%3E%3D+9
-    $.autoprefixer({browsers: 'last 2 versions, ie >= 7, iOS >= 9'}),
+    // ベンダープレフィックス付与
+    $.autoprefixer({grid: true}),
     // メディアクエリの整理
     $.cssMqpacker({sort: true})
   ];
   return gulp.src([dir.src + 'scss/**/*.scss'])
   // 書式エラーがあっても動作停止しない
   .pipe($.plumber({
-      errorHandler: $.notify.onError("Error: <%= error.message %>")
+    errorHandler: $.notify.onError("Error: <%= error.message %>")
   }))
   // sourcemapを出力するようにする
   .pipe($.sourcemaps.init())
@@ -87,7 +87,7 @@ gulp.task("js", function() {
   .pipe(browser.stream());
 });
 
-// babel
+// webpack
 gulp.task('webpack', function() {
   return webpackStream(webpackConfig, webpack)
   .pipe(gulp.dest(dir.dist+'js'))
@@ -134,8 +134,8 @@ gulp.task('clean', function (cb) {
 gulp.task('watch', function() {
   gulp.watch([dir.src + 'ejs/**/*'], ['ejs']);
   gulp.watch([dir.src + 'scss/**/*'], ['sass']);
-  //gulp.watch([dir.src + 'js/**/*'], ['js']);
-  gulp.watch([dir.src + 'js/**/*'], ['webpack']);
+  gulp.watch([dir.src + 'js/**/*'], ['js']);
+  gulp.watch([dir.src + 'webpack/**/*'], ['webpack']);
   gulp.watch([dir.src + 'images/**/*'], ['images']);
   gulp.watch([dir.src + 'resource/**/*'], ['copy']);
 });
@@ -149,6 +149,7 @@ gulp.task('build', function(callback) {
     'clean',
     ['ejs', 'sass', 'copy'],
     'images',
+    'js',
     'webpack',
     callback
   );
