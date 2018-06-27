@@ -79,6 +79,7 @@ gulp.task("sass", function() {
 // js圧縮
 gulp.task("js", function() {
   return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
+  .pipe($.changed(dir.dist+'js'))
   // 圧縮するならコメントアウト解除
   //.pipe($.uglify())
   //.pipe($.rename({extname: '.min.js'}))
@@ -97,9 +98,8 @@ gulp.task('webpack', function() {
 
 // 画像圧縮
 gulp.task('images', function(){
-  return gulp.src([
-    dir.src + 'images/**/*'
-  ])
+  return gulp.src([dir.src + 'images/**/*'])
+  .pipe($.changed(dir.dist + 'images/'))
   // 画像圧縮処理
   .pipe($.imagemin())
   // 出力先ディレクトリ
@@ -118,6 +118,7 @@ gulp.task('copy', function(){
     // このディレクトリを起点としてdistへコピーする
     base: dir.src + 'resource'
   })
+  .pipe($.changed(dir.dist))
   // 出力先ディレクトリ
   .pipe(gulp.dest(dir.dist))
   // ブラウザを更新する
