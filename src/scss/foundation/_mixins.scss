@@ -72,3 +72,15 @@
     }
   }
 }
+
+// reset form
+@mixin formReset {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  padding: 0;
+}

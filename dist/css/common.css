@@ -513,8 +513,8 @@ img {
   padding: 1em;
   pointer-events: auto;
   opacity: 0;
-  -webkit-transition: all 0.3s ease;
-          transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease-out;
+          transition: all 0.3s ease-out;
   position: relative;
 }
 
@@ -524,8 +524,33 @@ img {
 
 .c_modal_contents {
   max-width: 50vw;
-  max-height: 50vh;
+  max-height: 70vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: auto;
+}
+
+.c_modal_contents div {
+  margin: 0 0 10em;
+}
+
+.c_modal_contents input,
+.c_modal_contents textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  padding: 0.5em;
+  border: 1px solid #aaaaaa;
+  width: 100%;
+  background: #fafafa;
+}
+
+.c_modal_contents textarea {
+  height: 300px;
 }
 
 body {
