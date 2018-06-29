@@ -512,14 +512,8 @@ img {
   border-radius: 5px;
   padding: 1em;
   pointer-events: auto;
-  opacity: 0;
-  -webkit-transition: all 0.3s ease-out;
-          transition: all 0.3s ease-out;
   position: relative;
-}
-
-.-visible .c_modal_inner {
-  opacity: 1;
+  display: none;
 }
 
 .c_modal_contents {

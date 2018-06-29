@@ -1,20 +1,49 @@
-;(function($) {
-  $.fn.mooodal = function(options) {
+/*********************************
+jQuery Mooodal Plugin
+version : 0.1
+**********************************/
 
+;(function($, undefined) {
+
+  $.fn.mooodal = function(options) {
     var current;
     var elements = this;
     var opt = $.extend({
-        duration     : 300,
-        method       : 'inline',
-        overlay      : true,
-        overlayClose : true,
-        scrollLock   : true
-    }, options );
+      autoClose    : 0, // @todo Close modal in millisecond, 0 is disabled
+      duration     : 300, // duration of each functions
+      method       : 'inline', // inline | ajax
+      overlay      : true, // uses overlay or not.
+      overlayClose : true, // modal can be closed on clicking overlay.
+      scrollLock   : true // locks scroll under the modal.
+    }, options);
 
     var modalInit = () => {
       $('[data-modal]').each(function(){
         $(this).appendTo('body');
       })
+    }
+
+    var modalLoad = () => {
+      var def = new $.Deferred;
+      console.log(opt.method)
+      if(opt.method == 'ajax'){
+        $.ajax({
+          url　: opt.contents,
+          dataType : 'html',
+          success　: function(data){
+            $('body').append(data);
+            console.log('contents loaded from :',opt.contents)
+            def.resolve();
+          },
+          error: function(data){
+            console.log('failed to load', opt.contents);
+            def.reject();
+          }
+        });
+      } else {
+        def.resolve();
+      }
+      return def.promise();
     }
 
     var showOverlay = (target) => {
@@ -25,22 +54,37 @@
     }
 
     var modalLaunch = (target,callback) => {
-      console.log(target);
-      showOverlay(target);
-      $('[data-modal=' + target + ']').addClass('-visible');
-      $('[data-modal-close]').attr('data-modal-target', target);
-      scrollLock();
+      var promise = modalLoad();
+      promise.done(function(){
+        showOverlay(target);
+        $('[data-modal=' + target + ']').addClass('-visible').attr('data-modal-method', opt.method);
+        $('[data-modal=' + target + '] .c_modal_inner').fadeIn(opt.duration);
+        $('[data-modal-close]').attr('data-modal-target', target);
+        scrollLock();
+      })
+    }
+
+    var modalFade = (target) => {
+      var def = new $.Deferred;
+      $('[data-modal="' + target + '"] .c_modal_inner').fadeOut(opt.duration);
+      if(opt.overlayClose == true){
+        $('[data-overlay][data-modal-target="' + target + '"]').fadeOut(opt.duration);
+      };
+      setTimeout(function() {
+        def.resolve();
+      }, opt.duration);
+      return def.promise();
     }
 
     var modalClose = (target) => {
-      $('[data-modal]').removeClass('-visible');
-      if(opt.overlayClose == true){
-        $('[data-overlay]').fadeOut(opt.duration);
-        setTimeout(function() {
-          $('[data-overlay]').remove();
-          scrollLock('unlock');
-        }, opt.duration);
-      }
+      var promise = modalFade(target);
+      promise.done(function(){
+        $('[data-overlay][data-modal-target="' + target + '"]').remove();
+        scrollLock('unlock');
+        $('[data-modal="' + target + '"]').removeClass('-visible');
+        $('[data-modal-method="ajax"]').remove();
+        console.log('close function done');
+      })
     }
 
     var scrollLock = (method) => {
@@ -59,7 +103,9 @@
       modalInit();
     });
 
-    elements.on('click', function(){
+    elements.on('click', function(e){
+      e.preventDefault();
+      console.log('start');
       modalLaunch($(this).data('launch-modal'))
     });
 
@@ -67,5 +113,11 @@
       e.stopPropagation();
       modalClose($(this).data('modal-target'));
     })
+
+  $('[data-modal-target]').on('click', function(e){
+      e.stopPropagation();
+      modalClose($(this).data('modal-target'));
+    })
   };
+
 })(jQuery);
