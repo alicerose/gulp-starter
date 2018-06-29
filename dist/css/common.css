@@ -502,9 +502,37 @@ img {
 }
 
 [data-modal] .c_modal_inner > [data-modal-close] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  padding: 0;
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: -20px;
+  top: -20px;
+  overflow: hidden;
+  width: 50px;
+  height: 50px;
+  background-color: #ffffff;
+  border: 1px solid #a0a0a0;
+  border-radius: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-transition: opacity 300ms ease;
+          transition: opacity 300ms ease;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
 }
 
 .c_modal_inner {
@@ -518,7 +546,7 @@ img {
 
 .c_modal_contents {
   max-width: 50vw;
-  max-height: 70vh;
+  max-height: calc(70vh - 50px);
   overflow-y: auto;
   -webkit-overflow-scrolling: auto;
 }
@@ -545,6 +573,29 @@ img {
 
 .c_modal_contents textarea {
   height: 300px;
+}
+
+.c_modal_contents button {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  aling-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0.5em;
+  width: 100%;
+  color: #ffffff;
+  background-color: #8888cc;
+  border: 1px solid #a0a0a0;
 }
 
 body {
@@ -585,6 +636,9 @@ img {
 @media screen and (max-width: 640px) {
   .utility_pc-only {
     display: none;
+  }
+  [data-modal] .c_modal_inner > [data-modal-close]:hover {
+    opacity: 0.7;
   }
   .mq_demo {
     /* type 1 */

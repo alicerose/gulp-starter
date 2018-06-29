@@ -31,9 +31,21 @@
     top: 0;
   }
   & .c_modal_inner > [data-modal-close] {
+    @include formReset;
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: -20px;
+    top: -20px;
+    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    border: 1px solid #a0a0a0;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    @include hover;
   }
 }
 
@@ -47,7 +59,7 @@
 }
 .c_modal_contents {
   max-width: 50vw;
-  max-height: 70vh;
+  max-height: calc(70vh - 50px);
   overflow-y: auto;
   -webkit-overflow-scrolling: auto;
   div {
@@ -62,5 +74,16 @@
   }
   textarea {
     height: 300px;
+  }
+  button {
+    @include formReset;
+    display: flex;
+    aling-items: center;
+    justify-content: center;
+    padding: 0.5em;
+    width: 100%;
+    color: #fff;
+    background-color: #88c;
+    border: 1px solid #a0a0a0;
   }
 }
