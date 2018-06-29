@@ -1,6 +1,12 @@
 /*********************************
 jQuery Mooodal Plugin
 version : 0.1
+
+@todo
+- メソッド化
+- モーダルから別のモーダルへ移動
+- transition
+- オプション増やす
 **********************************/
 
 ;(function($, undefined) {
@@ -8,6 +14,7 @@ version : 0.1
   $.fn.mooodal = function(options) {
     var current;
     var elements = this;
+    var modalCounts;
     var opt = $.extend({
       autoClose    : 0, // @todo Close modal in millisecond, 0 is disabled
       duration     : 300, // duration of each functions
@@ -56,7 +63,13 @@ version : 0.1
     var modalLaunch = (target,callback) => {
       var promise = modalLoad();
       promise.done(function(){
-        showOverlay(target);
+        modalCounts = $('[data-modal].-visible').length;
+        console.log('Modal opened:',modalCounts);
+        if(modalCounts == 0){
+          showOverlay(target);
+        } else {
+          modalClose($('[data-modal].-visible').data('modal'), 'multiple');
+        }
         $('[data-modal=' + target + ']').addClass('-visible').attr('data-modal-method', opt.method);
         $('[data-modal=' + target + '] .c_modal_inner').fadeIn(opt.duration);
         $('[data-modal-close]').attr('data-modal-target', target);
@@ -64,10 +77,10 @@ version : 0.1
       })
     }
 
-    var modalFade = (target) => {
+    var modalFade = (target, method) => {
       var def = new $.Deferred;
       $('[data-modal="' + target + '"] .c_modal_inner').fadeOut(opt.duration);
-      if(opt.overlayClose == true){
+      if(opt.overlayClose == true && method !== 'multiple'){
         $('[data-overlay][data-modal-target="' + target + '"]').fadeOut(opt.duration);
       };
       setTimeout(function() {
@@ -76,10 +89,13 @@ version : 0.1
       return def.promise();
     }
 
-    var modalClose = (target) => {
-      var promise = modalFade(target);
+    var modalClose = (target, method) => {
+      console.log(target, method);
+      var promise = modalFade(target, method);
       promise.done(function(){
-        $('[data-overlay][data-modal-target="' + target + '"]').remove();
+        if(method !== 'multiple'){
+          $('[data-overlay][data-modal-target="' + target + '"]').remove();
+        }
         scrollLock('unlock');
         $('[data-modal="' + target + '"]').removeClass('-visible');
         $('[data-modal-method="ajax"]').remove();

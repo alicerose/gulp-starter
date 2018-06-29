@@ -24,6 +24,7 @@
   </div>
   <div style="height:200vh;">
     <button data-launch-modal="test3">Launch Modal Ajax</button>
+    <button data-launch-modal="test4">Multiple Modal</button>
   </div>
 </section>
 
@@ -49,6 +50,25 @@
     </div>
   </div>
 </div>
+<div data-modal="test4">
+  <div class="c_modal_inner">
+    <button data-modal-close>X</button>
+    <h2>Modal 4 : Multiple Modal</h2>
+    <div class="c_modal_contents">
+      <button data-launch-modal="test4a">Move to 4a</button>
+    </div>
+  </div>
+</div>
+<div data-modal="test4a">
+  <div class="c_modal_inner">
+    <button data-modal-close>X</button>
+    <h2>Modal 4a : Multiple Modal</h2>
+    <div class="c_modal_contents">
+      <button data-launch-modal="test4">Move to 4</button>
+      <button data-modal-close>Close</button>
+    </div>
+  </div>
+</div>
 
 <script src="/js/lib/jquery-2.2.4.min.js"></script>
 <script src="/js/modal_plugin.js"></script>
@@ -61,6 +81,8 @@
     method: 'ajax',
     contents: 'modal_ajax.html'
   });
+  $('[data-launch-modal="test4"]').mooodal();
+  $('[data-launch-modal="test4a"]').mooodal();
 </script>
 
     <footer>
