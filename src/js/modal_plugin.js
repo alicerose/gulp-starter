@@ -72,20 +72,20 @@ version : 0.1
       var promise = modalLoad();
       promise.then(function(){
         modalCounts = $(el.visible).length;
-        $('[data-modal-target]').off('click');
         console.log('Modal opened:',modalCounts);
         if(modalCounts == 0){
           showOverlay(target);
         } else {
           modalClose($(el.visible).data('modal'), 'multiple');
           $(el.overlay).attr('data-modal-target', target);
-          $('[data-modal-target]').off('click');
         }
         $('[data-modal=' + target + ']').addClass('-visible').attr('data-modal-method', opt.method);
         $('[data-modal=' + target + '] .c_modal_inner').fadeIn(opt.duration);
         $(el.close).attr('data-modal-target', target);
         scrollLock();
+        $('[data-modal-target]').off('click');
       }).done(function (){
+        console.log('add close event to modal', target)
         $('[data-modal-target]').on('click', function(e){
           e.preventDefault();
           e.stopPropagation();
@@ -116,7 +116,6 @@ version : 0.1
         scrollLock('unlock');
         $('[data-modal="' + target + '"]').removeClass('-visible');
         $('[data-modal-method="ajax"]').remove();
-        $('[data-modal-target]').off('click');
       })
     }
 
@@ -138,12 +137,11 @@ version : 0.1
 
     elements.on('click', function(e){
       e.preventDefault();
-      console.log('start');
       modalLaunch($(this).data('launch-modal'))
     });
 
     $('el.target').on('click', function(e){
-      e.stopPropagation();
+      e.preventDefault();
       modalClose($(this).data('modal-target'));
     })
   };
