@@ -69,6 +69,7 @@ version : 0.1
           showOverlay(target);
         } else {
           modalClose($('[data-modal].-visible').data('modal'), 'multiple');
+          $('[data-overlay]').attr('data-modal-target', target);
         }
         $('[data-modal=' + target + ']').addClass('-visible').attr('data-modal-method', opt.method);
         $('[data-modal=' + target + '] .c_modal_inner').fadeIn(opt.duration);
