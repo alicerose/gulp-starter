@@ -97,9 +97,12 @@ gulp.task("sass", function() {
 // js圧縮
 gulp.task("js", function() {
   return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
+  .pipe($.babel({
+    presets: ['es2015']
+  }))
   .pipe($.changed(dir.dist+'js'))
   // productionなら圧縮する
-  //.pipe($.if(isProduction, $.uglify()))
+  .pipe($.if(isProduction, $.uglify()))
   //.pipe($.rename({extname: '.min.js'}))
   .pipe(gulp.dest(dir.dist+'js'))
   // ブラウザを更新する

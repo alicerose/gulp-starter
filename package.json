@@ -25,6 +25,7 @@
     "browser-sync": "^2.24.4",
     "css-mqpacker": "^6.0.2",
     "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
     "gulp-changed": "^3.2.0",
     "gulp-clean-css": "^3.9.4",
     "gulp-csscomb": "^3.0.8",

@@ -11,13 +11,21 @@ version : 0.1
 
 ;(function($, undefined) {
 
+  var el = {
+    close : '[data-modal-close]',
+    modal   : '[data-modal]',
+    visible : '[data-modal].-visible',
+    target  : '[data-modal-target]',
+    overlay : '[data-overlay]'
+  }
+
   $.fn.mooodal = function(options) {
     var current;
     var elements = this;
     var modalCounts;
     var opt = $.extend({
       autoClose    : 0, // @todo Close modal in millisecond, 0 is disabled
-      duration     : 300, // duration of each functions
+      duration     : 100, // duration of each functions
       method       : 'inline', // inline | ajax
       overlay      : true, // uses overlay or not.
       overlayClose : true, // modal can be closed on clicking overlay.
@@ -25,7 +33,7 @@ version : 0.1
     }, options);
 
     var modalInit = () => {
-      $('[data-modal]').each(function(){
+      $(el.modal).each(function(){
         $(this).appendTo('body');
       })
     }
@@ -56,25 +64,33 @@ version : 0.1
     var showOverlay = (target) => {
       if(opt.overlay == true){
         $('body').append('<div data-overlay></div>');
-        $('[data-overlay]').attr('data-modal-target', target).fadeIn(opt.duration);
+        $(el.overlay).attr('data-modal-target', target).fadeIn(opt.duration);
       }
     }
 
     var modalLaunch = (target,callback) => {
       var promise = modalLoad();
-      promise.done(function(){
-        modalCounts = $('[data-modal].-visible').length;
+      promise.then(function(){
+        modalCounts = $(el.visible).length;
+        $('[data-modal-target]').off('click');
         console.log('Modal opened:',modalCounts);
         if(modalCounts == 0){
           showOverlay(target);
         } else {
-          modalClose($('[data-modal].-visible').data('modal'), 'multiple');
-          $('[data-overlay]').attr('data-modal-target', target);
+          modalClose($(el.visible).data('modal'), 'multiple');
+          $(el.overlay).attr('data-modal-target', target);
+          $('[data-modal-target]').off('click');
         }
         $('[data-modal=' + target + ']').addClass('-visible').attr('data-modal-method', opt.method);
         $('[data-modal=' + target + '] .c_modal_inner').fadeIn(opt.duration);
-        $('[data-modal-close]').attr('data-modal-target', target);
+        $(el.close).attr('data-modal-target', target);
         scrollLock();
+      }).done(function (){
+        $('[data-modal-target]').on('click', function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          modalClose($(this).data('modal-target'));
+        })
       })
     }
 
@@ -100,7 +116,7 @@ version : 0.1
         scrollLock('unlock');
         $('[data-modal="' + target + '"]').removeClass('-visible');
         $('[data-modal-method="ajax"]').remove();
-        console.log('close function done');
+        $('[data-modal-target]').off('click');
       })
     }
 
@@ -126,12 +142,7 @@ version : 0.1
       modalLaunch($(this).data('launch-modal'))
     });
 
-    $(document).on('click', '[data-modal-target]', function(e){
-      e.stopPropagation();
-      modalClose($(this).data('modal-target'));
-    })
-
-    $('[data-modal-target]').on('click', function(e){
+    $('el.target').on('click', function(e){
       e.stopPropagation();
       modalClose($(this).data('modal-target'));
     })
