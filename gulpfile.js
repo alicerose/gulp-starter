@@ -10,7 +10,7 @@ var $ = require('gulp-load-plugins')({
 // utility
 var browser     = require('browser-sync').create();
 var minimist    = require('minimist');
-var rimraf      = require('rimraf');
+var del         = require('del');
 var runSequence = require('run-sequence');
 
 // webpack
@@ -26,13 +26,15 @@ console.log('[Environment]', env, '[isProduction]', isProduction);
 if(isProduction == true){
   var dir = {
     src  : 'src/',
-    dist : 'release/'
+    dist : 'release/',
+    prod : 'release/'
   }
   var webpackConfig = require("./webpack.config.production");
 } else {
   var dir = {
     src  : 'src/',
-    dist : 'dist/'
+    dist : 'dist/',
+    prod : 'release/'
   }
   var webpackConfig = require("./webpack.config");
 }
@@ -97,7 +99,7 @@ gulp.task("js", function() {
   return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
   .pipe($.changed(dir.dist+'js'))
   // productionなら圧縮する
-  .pipe($.if(isProduction, $.uglify()))
+  //.pipe($.if(isProduction, $.uglify()))
   //.pipe($.rename({extname: '.min.js'}))
   .pipe(gulp.dest(dir.dist+'js'))
   // ブラウザを更新する
@@ -142,8 +144,8 @@ gulp.task('copy', function(){
 });
 
 // distを消去する（再構築用）
-gulp.task('clean', function (cb) {
-  rimraf(dir.dist, cb);
+gulp.task('clean', function () {
+  del([dir.dist, dir.prod]);
 });
 
 // ファイル変更監視

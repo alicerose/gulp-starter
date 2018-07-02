@@ -5,11 +5,11 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start"   : "gulp",
-    "webpack" : "gulp webpack",
-    "clean"   : "gulp clean",
-    "build"   : "gulp build",
-    "release" : "set NODE_ENV=production && gulp build"
+    "start": "gulp",
+    "webpack": "gulp webpack",
+    "clean": "gulp clean",
+    "build": "gulp build",
+    "release": "set NODE_ENV=production && gulp build"
   },
   "browserslist": [
     "last 2 versions",
@@ -47,6 +47,7 @@
     "webpack-stream": "^4.0.3"
   },
   "dependencies": {
+    "del": "^3.0.0",
     "jquery": "^3.3.1"
   }
 }

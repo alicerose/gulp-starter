@@ -131,7 +131,7 @@ version : 0.1
       modalClose($(this).data('modal-target'));
     })
 
-  $('[data-modal-target]').on('click', function(e){
+    $('[data-modal-target]').on('click', function(e){
       e.stopPropagation();
       modalClose($(this).data('modal-target'));
     })
