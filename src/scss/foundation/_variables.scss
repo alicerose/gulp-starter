@@ -6,10 +6,12 @@ $xl: 1280;
 $breakpoint: 640;
 
 // fontfamily
-$fontfamily: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Yu Gothic", YuGothic, sans-serif;
+$fontfamily: 'Roboto', -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Yu Gothic", YuGothic, sans-serif;
 
 // z-map
 $z-map: (
   header,
-  footer
+  footer,
+  modalOverlay,
+  modalBody
 );

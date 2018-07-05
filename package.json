@@ -5,11 +5,11 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start"   : "gulp",
-    "webpack" : "gulp webpack",
-    "clean"   : "gulp clean",
-    "build"   : "gulp build",
-    "release" : "set NODE_ENV=production && gulp build"
+    "start": "gulp",
+    "webpack": "gulp webpack",
+    "clean": "gulp clean",
+    "build": "gulp build",
+    "release": "set NODE_ENV=production && gulp build"
   },
   "browserslist": [
     "last 2 versions",
@@ -25,6 +25,7 @@
     "browser-sync": "^2.24.4",
     "css-mqpacker": "^6.0.2",
     "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
     "gulp-changed": "^3.2.0",
     "gulp-clean-css": "^3.9.4",
     "gulp-csscomb": "^3.0.8",
@@ -47,6 +48,7 @@
     "webpack-stream": "^4.0.3"
   },
   "dependencies": {
+    "del": "^3.0.0",
     "jquery": "^3.3.1"
   }
 }
