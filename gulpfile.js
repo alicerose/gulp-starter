@@ -177,7 +177,7 @@ gulp.task('hash', function () {
 
 // distを消去する（再構築用）
 gulp.task('clean', function () {
-  del([dir.dist, dir.prod]);
+  return del([dir.dist, dir.prod]);
 });
 
 // ファイル変更監視
