@@ -14,6 +14,7 @@ var pngquant = require('imagemin-pngquant');
 // utility
 var browser     = require('browser-sync').create();
 var minimist    = require('minimist');
+var crypto      = require('crypto');
 var del         = require('del');
 var runSequence = require('run-sequence');
 
@@ -25,6 +26,10 @@ var webpackStream = require('webpack-stream');
 var env          = process.env.NODE_ENV;
 var isProduction = (env !== undefined);
 console.log('[Environment]', env, '[isProduction]', isProduction);
+
+// リリース用ハッシュ生成
+var hash = crypto.randomBytes(8).toString('hex');
+console.log('Build Hash:', hash);
 
 // ディレクトリ
 if(isProduction == true){
@@ -159,6 +164,17 @@ gulp.task('copy', function(){
   .pipe(browser.stream());
 });
 
+// キャッシュ回避用ハッシュ付与（本番用ビルドのみ）
+gulp.task('hash', function () {
+  return gulp.src([
+    dir.dist + 'index.html',
+    dir.dist + '/**/*.html'
+  ])
+  .pipe($.if(isProduction, $.replace('.css"','.css?' + hash + '"')))
+  .pipe($.if(isProduction, $.replace('.js"','.js?' + hash + '"')))
+  .pipe(gulp.dest(dir.dist))
+});
+
 // distを消去する（再構築用）
 gulp.task('clean', function () {
   del([dir.dist, dir.prod]);
@@ -192,6 +208,7 @@ gulp.task('build', function(callback) {
     'images',
     'js',
     'webpack',
+    'hash',
     callback
   );
 });
