@@ -106,10 +106,14 @@ gulp.task("sass", function() {
 // js圧縮
 gulp.task("js", function() {
   return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
+  .pipe($.changed(dir.dist+'js'))
   .pipe($.babel({
     presets: ['es2015']
   }))
-  .pipe($.changed(dir.dist+'js'))
+  // 書式エラーがあっても動作停止しない
+  .pipe($.plumber({
+    errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
   // productionなら圧縮する
   .pipe($.if(isProduction, $.uglify()))
   //.pipe($.rename({extname: '.min.js'}))
