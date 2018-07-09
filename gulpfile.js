@@ -7,6 +7,10 @@ var $ = require('gulp-load-plugins')({
   ]
 });
 
+// imagemin
+var mozjpeg  = require('imagemin-mozjpeg');
+var pngquant = require('imagemin-pngquant');
+
 // utility
 var browser     = require('browser-sync').create();
 var minimist    = require('minimist');
@@ -122,6 +126,15 @@ gulp.task('images', function(){
   return gulp.src([dir.src + 'images/**/*'])
   .pipe($.changed(dir.dist + 'images/'))
   // 画像圧縮処理
+  .pipe($.imagemin([
+    $.imagemin.gifsicle(),
+    mozjpeg({ quality: 80 }),
+    pngquant(),
+    $.imagemin.svgo()
+  ], {
+    verbose: true
+  }))
+  // メタ情報再削除
   .pipe($.imagemin())
   // 出力先ディレクトリ
   .pipe(gulp.dest(dir.dist + 'images/'))
