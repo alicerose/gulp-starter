@@ -3,7 +3,8 @@ var $ = require('gulp-load-plugins')({
   pattern: [
     'gulp-*',
     'autoprefixer',
-    'css-mqpacker'
+    'css-mqpacker',
+    'postcss-cachebuster'
   ]
 });
 
@@ -76,7 +77,12 @@ gulp.task("sass", function() {
     // ベンダープレフィックス付与
     $.autoprefixer({grid: true}),
     // メディアクエリの整理
-    $.cssMqpacker({sort: true})
+    $.cssMqpacker({sort: true}),
+    // CSS内の画像キャッシュ飛ばし
+    $.postcssCachebuster({
+      type: 'checksum',
+      imagesPath: '/'+dir.dist
+    })
   ];
   return gulp.src([dir.src + 'scss/**/*.scss'])
   // 書式エラーがあっても動作停止しない
@@ -208,8 +214,8 @@ gulp.task('default', function(callback) {
 gulp.task('build', function(callback) {
   runSequence(
     'clean',
-    ['ejs', 'sass', 'copy'],
     'images',
+    ['ejs', 'sass', 'copy'],
     'js',
     'webpack',
     'hash',

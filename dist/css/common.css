@@ -610,6 +610,7 @@ img {
 body {
   padding: 1em;
   background-color: #f0f0f0;
+  background-image: url('/images/sample.jpg?vbf007e25d13824e0abc962d60a9d33d3');
 }
 
 img {
