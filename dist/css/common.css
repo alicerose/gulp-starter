@@ -70,8 +70,7 @@ figure {
  * 2. Show the overflow in Edge and IE.
  */
 hr {
-  -webkit-box-sizing: content-box;
-          box-sizing: content-box;
+  box-sizing: content-box;
   /* 1 */
   height: 0;
   /* 1 */
@@ -309,8 +308,7 @@ fieldset {
  *    `fieldset` elements in all browsers.
  */
 legend {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   /* 1 */
   color: inherit;
   /* 2 */
@@ -348,8 +346,7 @@ textarea {
  */
 [type='checkbox'],
 [type='radio'] {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   /* 1 */
   padding: 0;
   /* 2 */
@@ -443,8 +440,7 @@ template {
 }
 
 * {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
@@ -487,14 +483,8 @@ img {
 [data-modal].-visible {
   width: 100%;
   height: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
   justify-content: center;
   position: fixed;
   left: 0;
@@ -508,8 +498,7 @@ img {
   pointer-events: auto;
   position: relative;
   display: none;
-  -webkit-box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.25);
-          box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.25);
 }
 
 .c_modal_inner > [data-modal-close] {
@@ -529,19 +518,12 @@ img {
   height: 50px;
   background-color: #ffffff;
   border-radius: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
   justify-content: center;
   cursor: pointer;
   opacity: 1;
-  -webkit-transition: opacity 300ms ease;
-          transition: opacity 300ms ease;
+  transition: opacity 300ms ease;
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
 }
@@ -587,18 +569,11 @@ img {
   background: transparent;
   padding: 0;
   opacity: 1;
-  -webkit-transition: opacity 300ms ease;
-          transition: opacity 300ms ease;
+  transition: opacity 300ms ease;
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
   justify-content: center;
   padding: 0.5em;
   width: 100%;
@@ -610,7 +585,7 @@ img {
 body {
   padding: 1em;
   background-color: #f0f0f0;
-  background-image: url('/images/sample.jpg?vbf007e25d13824e0abc962d60a9d33d3');
+  background-image: url(/images/sample.jpg);
 }
 
 img {
