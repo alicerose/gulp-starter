@@ -32,7 +32,7 @@ gulp.task('server', () => {
   })
 });
 
-// SASS
+// SASSコンパイル
 gulp.task('sass', () => {
   const plugins = [
     $.autoprefixer({grid:true}),
@@ -62,11 +62,33 @@ gulp.task('sass', () => {
   .pipe(browser.stream());
 });
 
-//
+// EJSコンパイル
+gulp.task('ejs', () => {
+
+});
+
+// JSのトランスパイル・圧縮
+gulp.task('js', () => {
+
+});
+
+// 画像圧縮
+gulp.task('js', () => {
+
+});
+
+// コンパイル済みのファイル削除
+gulp.task('clean', () => {
+
+});
+
+
+// 監視対象ファイルの指定
 gulp.task('watch', () => {
   gulp.watch([dir.src + 'scss/**/*'], ['sass']);
 });
 
+// 通常タスク
 gulp.task('default', () => {
   $.runSequence(
     'build',
@@ -75,6 +97,7 @@ gulp.task('default', () => {
   );
 });
 
+// ファイルの一括処理
 gulp.task('build', () => {
   $.runSequence(
     'sass'
