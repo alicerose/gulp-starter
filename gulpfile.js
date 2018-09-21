@@ -62,14 +62,21 @@ gulp.task('sass', () => {
   .pipe(browser.stream());
 });
 
+//
 gulp.task('watch', () => {
   gulp.watch([dir.src + 'scss/**/*'], ['sass']);
 });
 
 gulp.task('default', () => {
   $.runSequence(
-    'sass',
+    'build',
     'server',
     'watch'
+  );
+});
+
+gulp.task('build', () => {
+  $.runSequence(
+    'sass'
   );
 });

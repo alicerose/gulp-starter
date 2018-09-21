@@ -4,7 +4,10 @@
   "description": "default node.js assets for frontend development",
   "main": "gulpfile.js",
   "scripts": {
-    "start": "gulp"
+    "start": "gulp",
+    "build": "gulp build",
+    "release": "NODE_ENV=production gulp build",
+    "winrelease": "set NODE_ENV=production && gulp build"
   },
   "repository": {
     "type": "git",
@@ -13,6 +16,12 @@
   "author": "TF_TK",
   "license": "ISC",
   "homepage": "https://bitbucket.org/alice37/gulp#readme",
+  "browserslist": [
+    "last 2 version",
+    "IE 11",
+    "maintained node versions",
+    "not dead"
+  ],
   "devDependencies": {
     "autoprefixer": "^9.1.5",
     "browser-sync": "^2.24.7",
