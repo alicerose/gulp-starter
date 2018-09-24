@@ -4,40 +4,43 @@
 
 ## What's this?
 
-* Default settings for new website project using node.js/gulp.
+Default settings for new website project using node.js/gulp.
 
-## How?
+## How to use
 
-* Install node.js
+* Install `Node.js`
 * Move to project directory.
 * Install with `npm install`
 * Launch with `npm start`
 
-## What's available?
+## Requirement
+
+* `Node.js`
+
+## Available Features
 
 * SCSS compile
 * EJS compile
-* ES6 transpile
+* ES6 transpile using `babel`
 * css/js/image minify
 * Browser sync
 
 ## Available Scripts
 
-* `npm start`
+### `npm start`
 
 Build everything and launch development server.
 Default port is 3000.
 Uses external ip as default address.
 
-* `npm run build`
+### `npm run build`
 
 Build every sources only with development mode.
 
-* `npm run clean`
+### `npm run clean`
 
 Remove `dist` directories.
 
-* `npm run release` / `npm run winrelease`
+### `npm run release` / `npm run winrelease`
 
 Remove `dist` direcrotories and build sources with production mode.
-
