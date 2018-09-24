@@ -1,11 +1,10 @@
-# gulp default template for static websites
+# default node.js assets for frontend development
 
 ---
 
 ## What's this?
 
 * Default settings for new website project using node.js/gulp.
-* Only required is node.js installation.
 
 ## How?
 
@@ -13,19 +12,32 @@
 * Move to project directory.
 * Install with `npm install`
 * Launch with `npm start`
-* Edit sources
 
 ## What's available?
 
-* gulp
-* gulp-sass
-* gulp-ejs
-* browser sync
-* image minify
-* js minify
+* SCSS compile
+* EJS compile
+* ES6 transpile
+* css/js/image minify
+* Browser sync
 
-## Warnings
+## Available Scripts
 
-* Don't overwrite/push directly to this repositry. This is only for general purpose.
-* gulpfile.js is need to work some more.
-* Make branch if you're trying to make big changes, for example, changing template system from ejs to other.
+* `npm start`
+
+Build everything and launch development server.
+Default port is 3000.
+Uses external ip as default address.
+
+* `npm run build`
+
+Build every sources only with development mode.
+
+* `npm run clean`
+
+Remove `dist` directories.
+
+* `npm run release` / `npm run winrelease`
+
+Remove `dist` direcrotories and build sources with production mode.
+

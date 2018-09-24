@@ -6,8 +6,9 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
-    "release": "NODE_ENV=production gulp build",
-    "winrelease": "set NODE_ENV=production && gulp build"
+    "clean": "gulp clean",
+    "release": "NODE_ENV=production gulp release",
+    "winrelease": "set NODE_ENV=production && gulp release"
   },
   "repository": {
     "type": "git",
@@ -23,10 +24,15 @@
     "not dead"
   ],
   "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
     "autoprefixer": "^9.1.5",
     "browser-sync": "^2.24.7",
     "css-mqpacker": "^7.0.0",
     "gulp": "^3.9.1",
+    "gulp-babel": "^8.0.0",
+    "gulp-cached": "^1.1.1",
+    "gulp-changed": "^3.2.0",
     "gulp-clean-css": "^3.10.0",
     "gulp-csscomb": "^3.0.8",
     "gulp-ejs": "^3.2.0",
@@ -44,5 +50,8 @@
     "imagemin-pngquant": "^6.0.0",
     "imagemin-svgo": "^7.0.0",
     "run-sequence": "^2.2.1"
+  },
+  "dependencies": {
+    "del": "^3.0.0"
   }
 }
