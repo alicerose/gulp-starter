@@ -6,6 +6,7 @@ const $ = require('gulp-load-plugins')({
     'imagemin-*',
     'autoprefixer',
     'css-mqpacker',
+    'postcss-flexbugs-fixes',
     'run-sequence',
     'babel'
   ]
@@ -15,12 +16,13 @@ const $ = require('gulp-load-plugins')({
 const browser = require('browser-sync').create();
 const del     = require('del');
 
-// env
+// 起動時に環境変数でdevelopment/productionを取得
+// 何も指定しなければdevelopment
 const env = process.env.NODE_ENV;
 const isProduction = (env !== undefined);
 console.log('[Node Environment]',env, '[isProduction]',isProduction)
 
-// directories
+// ソース・出力先ディレクトリの指定
 const dir = {
   src : 'src/',
   dist: 'dist/'
@@ -36,6 +38,11 @@ gulp.task('server', () => {
 });
 
 // SASSコンパイル
+const plugins = [
+  $.autoprefixer({grid:true}), // ベンダープリフィックス付与
+  $.cssMqpacker({sort:true}),  // メディアクエリ記述をまとめる
+  $.postcssFlexbugsFixes()     // Flexbox関連バグの修正
+];
 gulp.task('sass', () => {
   return gulp.src([dir.src + 'scss/**/*.scss'])
   // 変更のあったファイルのみビルド対象にする
@@ -47,10 +54,7 @@ gulp.task('sass', () => {
   // sassコンパイル、方式指定
   .pipe($.sass({outputStyle: 'expanded'}))
   // cssプラグインの適用
-  .pipe($.postcss([
-    $.autoprefixer({grid:true}),
-    $.cssMqpacker({sort:true})
-  ]))
+  .pipe($.postcss(plugins))
   // developなら整形する
   .pipe($.if(!isProduction, $.csscomb()))
   // developならsourcemapを生成する
@@ -82,7 +86,7 @@ gulp.task('ejs', () => {
 
 // JSのトランスパイル・圧縮
 gulp.task('js', () => {
-  return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
+  return gulp.src([dir.src + '/js/**/*.js'])
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
@@ -91,6 +95,8 @@ gulp.task('js', () => {
   .pipe($.babel({
     presets: ['@babel/env']
   }))
+  // productionならconsole.logを出力しない
+  .pipe($.if(isProduction, $.stripDebug()))
   // productionなら圧縮する
   .pipe($.if(isProduction, $.uglify()))
   // 出力先ディレクトリ
