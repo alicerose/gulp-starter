@@ -1,28 +1,4 @@
 body {
   padding : 1em;
-}
-
-img {
-  display: none;
-}
-
-.mq_demo {
-  @include mq {
-    /* type 1 */
-  }
-  @include mq(min) {
-    /* type 2 */
-    @include mq($lg) {
-      /* type 3 */
-    }
-  }
-  @include mq($lg) {
-    /* type 4 */
-  }
-  @include mq(min, $lg) {
-    /* type 5 */
-    @include mq($xl) {
-      /* type 6 */
-    }
-  }
+  background-color: #f0f0f0;
 }

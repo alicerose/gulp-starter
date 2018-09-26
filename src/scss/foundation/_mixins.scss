@@ -64,11 +64,30 @@
 
 // hover
 @mixin hover($method:opacity, $value:0.7) {
+  #{$method}: 1;
   transition: #{$method} 300ms ease;
   backface-visibility: hidden;
   &:hover {
-    @include mq {
+    @include mq(min) {
       #{$method}: $value;
+    }
+  }
+}
+
+// reset form
+// @include formReset(select)でセレクトボックス用
+@mixin formReset($property: input) {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  @if($property == select) {
+    &::-ms-expand {
+      display: none;
     }
   }
 }

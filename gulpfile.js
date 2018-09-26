@@ -1,53 +1,78 @@
-var gulp    = require('gulp');
-var $ = require('gulp-load-plugins')({
+// requirements
+const gulp    = require('gulp');
+const $ = require('gulp-load-plugins')({
   pattern: [
     'gulp-*',
+    'imagemin-*',
     'autoprefixer',
-    'css-mqpacker'
+    'css-mqpacker',
+    'postcss-flexbugs-fixes',
+    'run-sequence',
+    'babel'
   ]
 });
 
-// utility
-var browser     = require('browser-sync').create();
-var minimist    = require('minimist');
-var rimraf      = require('rimraf');
-var runSequence = require('run-sequence');
+// utilities
+const browser = require('browser-sync').create();
+const del     = require('del');
 
-// webpack
-var webpack       = require('webpack');
-var webpackStream = require('webpack-stream');
+// 起動時に環境変数でdevelopment/productionを取得
+// 何も指定しなければdevelopment
+const env = process.env.NODE_ENV;
+const isProduction = (env !== undefined);
+console.log('[Node Environment]',env, '[isProduction]',isProduction)
 
-// environment setting
-var env          = process.env.NODE_ENV;
-var isProduction = (env !== undefined);
-console.log('[Environment]', env, '[isProduction]', isProduction);
-
-// ディレクトリ
-if(isProduction == true){
-  var dir = {
-    src  : 'src/',
-    dist : 'release/'
-  }
-  var webpackConfig = require("./webpack.config.production");
-} else {
-  var dir = {
-    src  : 'src/',
-    dist : 'dist/'
-  }
-  var webpackConfig = require("./webpack.config");
+// ソース・出力先ディレクトリの指定
+const dir = {
+  src : 'src/',
+  dist: 'dist/'
 }
 
-// 開発用サーバをローカルに立ち上げる
-gulp.task('server', function() {
+// ローカル上で開発用サーバ起動
+gulp.task('server', () => {
   browser.init({
-    server: {baseDir: dir.dist}
-  });
+    server    : {baseDir: dir.dist}, // 起点となるディレクトリの指定
+    ghostMode : false,               // trueでデバイス間のクリック・スクロールなども同期させる
+    open      : "external"           // プライベートIPでブラウザ起動
+  })
 });
 
-// ejsコンパイル
-gulp.task("ejs", function() {
-  return gulp.src([dir.src + 'ejs/**/*.ejs','!' + dir.src + '/ejs/**/_*.ejs'])
-  // 書式エラーがあっても動作停止しない
+// SASSコンパイル
+const plugins = [
+  $.autoprefixer({grid:true}), // ベンダープリフィックス付与
+  $.cssMqpacker({sort:true}),  // メディアクエリ記述をまとめる
+  $.postcssFlexbugsFixes()     // Flexbox関連バグの修正
+];
+gulp.task('sass', () => {
+  return gulp.src([dir.src + 'scss/**/*.scss'])
+  // 変更のあったファイルのみビルド対象にする
+  .pipe($.cached('scss'))
+  // エラーの場合は停止せずに通知を出す
+  .pipe($.plumber({
+    errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
+  // sassコンパイル、方式指定
+  .pipe($.sass({outputStyle: 'expanded'}))
+  // cssプラグインの適用
+  .pipe($.postcss(plugins))
+  // developなら整形する
+  .pipe($.if(!isProduction, $.csscomb()))
+  // developならsourcemapを生成する
+  .pipe($.if(!isProduction, $.sourcemaps.init()))
+  // developならsourcemap出力する
+  .pipe($.if(!isProduction, $.sourcemaps.write('../maps')))
+  // productionなら圧縮する
+  .pipe($.if(isProduction, $.cleanCss()))
+  // 出力先ディレクトリ
+  .pipe(gulp.dest(dir.dist+'css'))
+  // Sassを更新したらリロードせずに直接反映させる
+  .pipe(browser.stream());
+});
+
+// EJSコンパイル
+gulp.task('ejs', () => {
+  return gulp.src([dir.src + 'ejs/**/*.ejs'])
+  // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
   }))
@@ -59,121 +84,108 @@ gulp.task("ejs", function() {
   .pipe(browser.stream());
 });
 
-// sassコンパイル
-gulp.task("sass", function() {
-  var plugins = [
-    // ベンダープレフィックス付与
-    $.autoprefixer({grid: true}),
-    // メディアクエリの整理
-    $.cssMqpacker({sort: true})
-  ];
-  return gulp.src([dir.src + 'scss/**/*.scss'])
-  // 書式エラーがあっても動作停止しない
+// JSのトランスパイル・圧縮
+gulp.task('js', () => {
+  return gulp.src([dir.src + '/js/**/*.js'])
+  // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
   }))
-  // sourcemapを出力するようにする
-  .pipe($.sourcemaps.init())
-  // sassコンパイル、方式指定
-  // expanded   : 展開
-  // compressed : 圧縮
-  .pipe($.sass({outputStyle: 'expanded'}))
-  // css整形
-  .pipe($.postcss(plugins))
-  .pipe($.if(!isProduction, $.csscomb()))
-  // sourcemap出力先
-  // css出力先からの相対パスで書く
-  .pipe($.if(!isProduction, $.sourcemaps.write('../maps')))
-  //本番なら圧縮する
-  .pipe($.if(isProduction, $.cleanCss()))
-  // 出力先ディレクトリ
-  .pipe(gulp.dest(dir.dist+'css'))
-  // ブラウザを更新する
-  .pipe(browser.stream());
-});
-
-// js圧縮
-gulp.task("js", function() {
-  return gulp.src([dir.src + '/js/**/*.js','!' + dir.src + 'js/lib/*.js'])
-  .pipe($.changed(dir.dist+'js'))
+  // トランスパイル
+  .pipe($.babel({
+    presets: ['@babel/env']
+  }))
+  // productionならconsole.logを出力しない
+  .pipe($.if(isProduction, $.stripDebug()))
   // productionなら圧縮する
   .pipe($.if(isProduction, $.uglify()))
-  //.pipe($.rename({extname: '.min.js'}))
-  .pipe(gulp.dest(dir.dist+'js'))
-  // ブラウザを更新する
-  .pipe(browser.stream());
-});
-
-// webpack
-gulp.task('webpack', function() {
-  return webpackStream(webpackConfig, webpack)
+  // 出力先ディレクトリ
   .pipe(gulp.dest(dir.dist+'js'))
   // ブラウザを更新する
   .pipe(browser.stream());
 });
 
 // 画像圧縮
-gulp.task('images', function(){
-  return gulp.src([dir.src + 'images/**/*'])
-  .pipe($.changed(dir.dist + 'images/'))
-  // 画像圧縮処理
+const dirimage = {
+  src: dir.src + 'images/',
+  dist: dir.dist + 'images/'
+}
+gulp.task('images', () => {
+  return gulp.src([dirimage.src + '**/*'])
+  // エラーの場合は停止せずに通知を出す
+  .pipe($.plumber({
+    errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
+  // 変更のあったファイルのみビルド対象にする
+  .pipe($.changed(dirimage.dist))
+  // 画像圧縮処理とオプション
+  .pipe($.imagemin([
+    $.imagemin.gifsicle(),
+    $.imageminMozjpeg({ quality: 80 }),
+    $.imageminPngquant(),
+    $.imagemin.svgo()
+  ], {
+    // 変換ログ出力
+    verbose: true
+  }))
+  // メタ情報再削除
   .pipe($.imagemin())
   // 出力先ディレクトリ
-  .pipe(gulp.dest(dir.dist + 'images/'))
+  .pipe(gulp.dest(dirimage.dist))
   // ブラウザを更新する
   .pipe(browser.stream());
 });
 
-// コピー（配置するだけのリソース用）
-gulp.task('copy', function(){
+//
+gulp.task('static', function () {
   return gulp.src([
-    dir.src + 'resource/**/*',
-    dir.src + 'resource/.htaccess'
+    dir.src + 'static/**/*',
+    dir.src + 'static/.htaccess'
   ], {
-    // コピー元ディレクトリ
-    // このディレクトリを起点としてdistへコピーする
-    base: dir.src + 'resource'
+    base: dir.src + 'static'
   })
-  .pipe($.changed(dir.dist))
-  // 出力先ディレクトリ
   .pipe(gulp.dest(dir.dist))
-  // ブラウザを更新する
-  .pipe(browser.stream());
 });
 
-// distを消去する（再構築用）
-gulp.task('clean', function (cb) {
-  rimraf(dir.dist, cb);
+// コンパイル済みのファイル削除
+gulp.task('clean', function () {
+  return del([dir.dist]);
 });
 
-// ファイル変更監視
-gulp.task('watch', function() {
+
+// 監視対象ファイルの指定
+gulp.task('watch', () => {
   gulp.watch([dir.src + 'ejs/**/*'], ['ejs']);
   gulp.watch([dir.src + 'scss/**/*'], ['sass']);
   gulp.watch([dir.src + 'js/**/*'], ['js']);
-  gulp.watch([dir.src + 'webpack/**/*'], ['webpack']);
   gulp.watch([dir.src + 'images/**/*'], ['images']);
-  gulp.watch([dir.src + 'resource/**/*'], ['copy']);
+  gulp.watch([dir.src + 'static/**/*'], ['static']);
 });
 
-// 標準タスク
-gulp.task('default', function(callback) {
-  runSequence(
+// 通常タスク
+gulp.task('default', () => {
+  $.runSequence(
     'build',
-    'server',
     'watch',
-    callback
+    'server'
   );
 });
 
-// 再構築
-gulp.task('build', function(callback) {
-  runSequence(
-    'clean',
-    ['ejs', 'sass', 'copy'],
-    'images',
+// ファイルの一括処理
+gulp.task('build', () => {
+  $.runSequence(
+    'ejs',
+    'sass',
     'js',
-    'webpack',
-    callback
+    'images',
+    'static'
+  );
+});
+
+// production環境用の一括処理
+gulp.task('release', () => {
+  $.runSequence(
+    'clean',
+    'build'
   );
 });
