@@ -65,7 +65,7 @@ gulp.task('sass', () => {
   .pipe($.if(isProduction, $.cleanCss()))
   // 出力先ディレクトリ
   .pipe(gulp.dest(dir.dist+'css'))
-  // Sassを更新したらその場でブラウザに反映させる
+  // Sassを更新したらリロードせずに直接反映させる
   .pipe(browser.stream());
 });
 

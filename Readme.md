@@ -44,3 +44,5 @@ Remove `dist` directories.
 ### `npm run release` / `npm run winrelease`
 
 Remove `dist` direcrotories and build sources with production mode.
+`npm run release` is for macOS user.
+`npm run winrelease` is for Windows user.

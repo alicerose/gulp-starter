@@ -37,6 +37,4 @@ async function doSomething() {
   console.log(await doSomethingAsync())
 }
 
-console.log('Before')
-doSomething()
-console.log('After')
+doSomething();
