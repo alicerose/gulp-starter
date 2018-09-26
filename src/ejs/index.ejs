@@ -1,19 +1,24 @@
-<% var meta = {description : 'test',title : 'gulp'}; %>
-<% include _template %>
-<% function contents() { %>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="Example" />
+    <link rel="stylesheet" href="/css/common.css" />
+    <title>Example</title>
+  </head>
+  <body>
+    <header>
+      <h1>header</h1>
+    </header>
+    <main>
+      <%- include('./module/_module') %>
+    </main>
+    <footer>
+      <p>footer</p>
+    </footer>
 
-    <section>
-      <p>Modal</p>
-      <div>
-        <img src="<%= config.imgpath %>miffy.jpg" alt="" class="utility_pc-only">
-      </div>
-      <ul>
-        <li><a href="modal.html"><s>sample</s></a></li>
-        <li><a href="modal_plugin.html">plugin</a></li>
-        <li><a href="modal_method.html">method</a>(wip)</li>
-      </ul>
-    </section>
-
-<% } %>
-
-<% function scripts() { %><% } %>
+    <script src="/js/common.js"></script>
+  </body>
+</html>
