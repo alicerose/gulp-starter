@@ -71,7 +71,7 @@ gulp.task('sass', () => {
 
 // EJSコンパイル
 gulp.task('ejs', () => {
-  return gulp.src([dir.src + 'ejs/**/*.ejs'])
+  return gulp.src([dir.src + 'ejs/**/*.ejs','!' + dir.src + '/ejs/**/_*.ejs'])
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
@@ -140,7 +140,8 @@ gulp.task('images', () => {
 gulp.task('static', function () {
   return gulp.src([
     dir.src + 'static/**/*',
-    dir.src + 'static/.htaccess'
+    dir.src + 'static/*.*',
+    dir.src + 'static/.*'
   ], {
     base: dir.src + 'static'
   })
