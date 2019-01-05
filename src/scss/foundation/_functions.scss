@@ -1,0 +1,8 @@
+// z-index
+// variablesで定義した順にz-indexを付与する
+// .hoge {
+//   z-index: z(fuga); // z-index: 1;
+// }
+@function z($name) {
+  @return index($z-map, $name);
+}

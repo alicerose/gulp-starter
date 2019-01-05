@@ -5,21 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content="Example" />
-    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/assets/css/common.css" />
     <title>Example</title>
   </head>
   <body>
-    <header>
-      <h1>header</h1>
-    </header>
+    <%- include('modules/_header') %>
     <main>
-      <%- include('./module/_module1') %>
-      <%- include('./module/_module2', {var1:'very'}) %>
+      asdf
     </main>
-    <footer>
-      <p>footer</p>
-    </footer>
-
-    <script src="/js/common.js"></script>
+    <%- include('modules/_footer') %>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="/assets/js/common.js"></script>
   </body>
 </html>
