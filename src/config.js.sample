@@ -1,0 +1,18 @@
+const config = {
+
+  // 開発用サーバ設定
+  server: {
+
+    // trueでデバイス間のクリック・スクロールなども同期させる
+    ghost: true,
+
+    // external : プライベートIPでブラウザ起動
+    // internal : localhostでブラウザ起動
+    open : "internal"
+
+  }
+}
+
+module.exports = {
+  config: config
+}

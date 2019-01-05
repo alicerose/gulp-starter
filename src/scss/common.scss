@@ -1,20 +1,25 @@
-@charset "UTF-8";
+@char-set "UTF-8";
 
-//vender
+// vender
 @import "vender/normalize";
 
-//foundation
+// foundation
 @import "foundation/variables";
 @import "foundation/functions";
 @import "foundation/mixins";
-@import "foundation/base";
 
-//utility
-@import "object/utility/utility_pcsp";
+// components
 
-//component
+// sample
 
-//layout
+body {
+  font-family: $fontfamily;
+}
 
-//project
-@import "object/project/demo";
+header {
+  z-index : z(header);
+}
+
+footer {
+  z-index: z(footer);
+}
