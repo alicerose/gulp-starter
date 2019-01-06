@@ -19,9 +19,7 @@
   "homepage": "https://bitbucket.org/alice37/gulp#readme",
   "browserslist": [
     "last 2 version",
-    "IE 11",
-    "maintained node versions",
-    "not dead"
+    "IE 11"
   ],
   "devDependencies": {
     "@babel/core": "^7.1.0",
