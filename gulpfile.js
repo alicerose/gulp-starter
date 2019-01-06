@@ -116,7 +116,7 @@ task('sass', (done) => {
   // productionなら圧縮する
   .pipe($.if(isProduction, $.cleanCss()))
   // 出力先ディレクトリ
-  .pipe(dest(dir.dist+dir.assets+'css', { sourcemaps: '.' }))
+  .pipe(dest(dir.dist+dir.assets+'css', {sourcemaps: '../maps/'}))
   // Sassを更新したらリロードせずに直接反映させる
   .pipe(browser.stream())
   // タスクの終了宣言
