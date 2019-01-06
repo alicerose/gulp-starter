@@ -4,8 +4,8 @@ const del      = require('del')
 const minimist = require('minimist');
 
 // gulp系統のパッケージ読み込み
-const gulp    = require('gulp')
-const $       = require('gulp-load-plugins')({
+const {watch, series, task, src, dest} = require('gulp');
+const $ = require('gulp-load-plugins')({
   pattern: [
     'gulp-*',
     'run-sequence',
@@ -70,7 +70,7 @@ console.log('[build env]', options.env, '[is production]', isProduction)
 /* ============================================ */
 
 // ローカル上で開発用サーバ起動
-gulp.task('server', () => {
+task('server', () => {
   browser.init({
     server    : {baseDir: dir.dist},
     ghostMode : config.server.ghost,
@@ -79,8 +79,8 @@ gulp.task('server', () => {
 })
 
 // EJSコンパイル
-gulp.task('ejs', (done) => {
-  return gulp.src([
+task('ejs', (done) => {
+  return src([
     dir.src + 'ejs/**/*.ejs',
     '!' + dir.src + '/ejs/**/_*.ejs'
   ])
@@ -91,7 +91,7 @@ gulp.task('ejs', (done) => {
   // 拡張子設定
   .pipe($.ejs({}, {}, {"ext": "."+project.ejs.ext}))
   // 出力先ディレクトリ
-  .pipe(gulp.dest(dir.dist))
+  .pipe(dest(dir.dist))
   // ブラウザを更新する
   .pipe(browser.stream())
   // タスクの終了宣言
@@ -99,8 +99,8 @@ gulp.task('ejs', (done) => {
 })
 
 // SASSコンパイル
-gulp.task('sass', (done) => {
-  return gulp.src([dir.src + 'scss/**/*.scss'])
+task('sass', (done) => {
+  return src(dir.src + 'scss/**/*.scss', {sourcemaps: true})
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
@@ -108,28 +108,24 @@ gulp.task('sass', (done) => {
   // scssファイルをまとめて読み込む
   .pipe($.sassGlob())
   // コンパイル
-  .pipe($.sass())
-  // developならsourcemapを生成する
-  .pipe($.if(!isProduction, $.sourcemaps.init()))
+  .pipe($.sass({outputStyle:'expanded'}))
   // cssプラグインの適用
   .pipe($.postcss(project.scss.plugins))
   // developなら整形する
-  .pipe($.if(!isProduction, $.csscomb()))
-  // developならsourcemap出力する
-  .pipe($.if(!isProduction, $.sourcemaps.write('../maps')))
+  //.pipe($.if(!isProduction, $.csscomb()))
   // productionなら圧縮する
   .pipe($.if(isProduction, $.cleanCss()))
   // 出力先ディレクトリ
-  .pipe(gulp.dest(dir.dist+dir.assets+'css'))
+  .pipe(dest(dir.dist+dir.assets+'css', { sourcemaps: '.' }))
   // Sassを更新したらリロードせずに直接反映させる
-  .pipe(browser.stream());
+  .pipe(browser.stream())
   // タスクの終了宣言
   done()
 });
 
 // JSのトランスパイル・圧縮
-gulp.task('js', (done) => {
-  return gulp.src([
+task('js', (done) => {
+  return src([
     dir.src + '/js/**/*.js'
   ])
   // エラーの場合は停止せずに通知を出す
@@ -147,7 +143,7 @@ gulp.task('js', (done) => {
   // productionなら圧縮する
   .pipe($.if(isProduction && project.js.uglify, $.uglify()))
   // 出力先ディレクトリ
-  .pipe(gulp.dest(dir.dist+dir.assets+'js'))
+  .pipe(dest(dir.dist+dir.assets+'js'))
   // ブラウザを更新する
   .pipe(browser.stream())
   // タスクの終了宣言
@@ -155,8 +151,8 @@ gulp.task('js', (done) => {
 })
 
 // 画像圧縮
-gulp.task('images', (done) => {
-  return gulp.src([dir.images.src + '/**/*'])
+task('images', (done) => {
+  return src([dir.images.src + '/**/*'])
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
@@ -176,7 +172,7 @@ gulp.task('images', (done) => {
   // メタ情報再削除
   .pipe($.imagemin())
   // 出力先ディレクトリ
-  .pipe(gulp.dest(dir.images.dist))
+  .pipe(dest(dir.images.dist))
   // ブラウザを更新する
   .pipe(browser.stream())
   // タスクの終了宣言
@@ -184,21 +180,21 @@ gulp.task('images', (done) => {
 })
 
 //
-gulp.task('assets', (done) => {
-  return gulp.src([
+task('assets', (done) => {
+  return src([
     dir.src + dir.assets + '**/*',
     dir.src + dir.assets + '*.*',
     dir.src + dir.assets + '.*'
   ], {
     base: dir.src + 'assets'
   })
-  .pipe(gulp.dest(dir.dist))
+  .pipe(dest(dir.dist))
   // タスクの終了宣言
   done()
 })
 
 // コンパイル済みのファイル削除
-gulp.task('clean', (done) => {
+task('clean', (done) => {
   return del([dir.dist])
   // タスクの終了宣言
   done()
@@ -206,17 +202,17 @@ gulp.task('clean', (done) => {
 
 
 // 監視対象ファイルの指定
-gulp.task('watch', (done) => {
-  gulp.watch([dir.src + 'ejs/**/*'], gulp.task('ejs'))
-  gulp.watch([dir.src + 'scss/**/*'], gulp.task('sass'))
-  gulp.watch([dir.src + 'js/**/*'], gulp.task('js'))
-  gulp.watch([dir.src + 'images/**/*'], gulp.task('images'))
-  gulp.watch([dir.src + 'assets/**/*'], gulp.task('assets'))
+task('watch', (done) => {
+  watch([dir.src + 'ejs/**/*'], task('ejs'))
+  watch([dir.src + 'scss/**/*'], task('sass'))
+  watch([dir.src + 'js/**/*'], task('js'))
+  watch([dir.src + 'images/**/*'], task('images'))
+  watch([dir.src + 'assets/**/*'], task('assets'))
   done()
 })
 
 // ファイルの一括処理
-gulp.task('build', gulp.series(
+task('build', series(
   'ejs',
   'sass',
   'js',
@@ -228,7 +224,7 @@ gulp.task('build', gulp.series(
 })
 
 // 通常タスク
-gulp.task('default', gulp.series(
+task('default', series(
   'build',
   'watch',
   'server'
@@ -238,7 +234,7 @@ gulp.task('default', gulp.series(
 })
 
 // production環境用の一括処理
-gulp.task('release', gulp.series(
+task('release', series(
   'clean',
   'build'
 ), (done) => {
