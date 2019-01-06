@@ -11,7 +11,12 @@
   <body>
     <%- include('modules/_header') %>
     <main>
-      asdf
+      <h2>変数の引き渡し</h2>
+      <%- include('modules/_block', {text:'hogehoge'}) %>
+      <h2>要素の繰り返し</h2>
+      <% for(var i = 0;i < 10;i++) { %>
+      <%- include('modules/_block', {text:i}) %>
+      <% } %>
     </main>
     <%- include('modules/_footer') %>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
