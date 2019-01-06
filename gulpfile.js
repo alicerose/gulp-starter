@@ -176,7 +176,7 @@ gulp.task('images', (done) => {
   // メタ情報再削除
   .pipe($.imagemin())
   // 出力先ディレクトリ
-  .pipe(gulp.dest(dir.dist + 'assets'))
+  .pipe(gulp.dest(dir.images.dist))
   // ブラウザを更新する
   .pipe(browser.stream())
   // タスクの終了宣言
