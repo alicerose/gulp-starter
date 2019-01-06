@@ -1,5 +1,3 @@
-@char-set "UTF-8";
-
 // vender
 @import "vender/normalize";
 
@@ -9,17 +7,4 @@
 @import "foundation/mixins";
 
 // components
-
-// sample
-
-body {
-  font-family: $fontfamily;
-}
-
-header {
-  z-index : z(header);
-}
-
-footer {
-  z-index: z(footer);
-}
+@import "object/**";

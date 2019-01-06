@@ -1,0 +1,26 @@
+// sample
+
+body {
+  font-family: $fontfamily;
+  padding: 0 1em;
+}
+
+header {
+  z-index : z(header);
+}
+
+footer {
+  z-index: z(footer);
+}
+
+section {
+  display: flex;
+  flex-wrap: wrap;
+  h2 {
+    width: 100%;
+  }
+}
+
+.blocks {
+  padding: .25em;
+}
