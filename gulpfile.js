@@ -8,7 +8,6 @@ const {watch, series, task, src, dest} = require('gulp');
 const $ = require('gulp-load-plugins')({
   pattern: [
     'gulp-*',
-    'run-sequence',
     'autoprefixer',
     'css-mqpacker',
     'postcss-flexbugs-fixes',
