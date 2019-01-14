@@ -1,33 +1,62 @@
 // パッケージ読み込み
 const browser  = require('browser-sync')
+const crypto   = require('crypto')
 const del      = require('del')
-const minimist = require('minimist');
+const minimist = require('minimist')
 
 // gulp系統のパッケージ読み込み
 const {watch, series, task, src, dest} = require('gulp');
 const $ = require('gulp-load-plugins')({
+  DEBUG: false,
   pattern: [
     'gulp-*',
-    'run-sequence',
+    'postcss-*',
+    'imagemin-*',
     'autoprefixer',
-    'css-mqpacker',
-    'postcss-flexbugs-fixes',
-    'imagemin-*'
-  ]
+    'css-mqpacker'
+  ],
+  overridePattern: false
 })
+
+// ディレクトリ設定
+const dir     = {
+  // ソースディレクトリ
+  src    : './src/',
+  // ビルドディレクトリ
+  dist   : './dist/',
+  // assetsディレクトリ
+  assets : 'assets/',
+  // css出力先
+  css    : 'assets/css',
+  // js出力先
+  js     : 'assets/js',
+  // 画像出力先
+  images : 'assets/images'
+}
 
 // プロジェクト設定
 const project = {
-
   ejs: {
-    ext : 'html' // EJSの出力拡張子
+    ext      : 'html',    // EJSの出力拡張子
+    revision : true, // キャッシュ避けリビジョン付与
+    prettier : false, // HTMLを整形するか
+    options  : {
+      // https://prettier.io/docs/en/options.html
+      tabWidth : 2,
+      useTabs : false,
+      htmlWhitespaceSensitivity : 'css'
+    }
   },
 
   scss: {
+    csscomb    : false, // .csscomb.jsonの内容で整形するか
+    minify     : true,  // リリースビルドで圧縮するか否か
+    sourcemaps : true,  // sourcemapsの使用
     plugins: [
       $.autoprefixer({grid:true}), // ベンダープリフィックス付与
       $.cssMqpacker({sort:true}),  // メディアクエリ記述をまとめる
-      $.postcssFlexbugsFixes()     // Flexbox関連バグの修正
+      $.postcssFlexbugsFixes(),    // Flexbox関連バグの修正
+      $.postcssCachebuster({type: 'checksum'}) // キャッシュ避けを付与する
     ]
   },
 
@@ -36,25 +65,10 @@ const project = {
     stripDebug : true, // リリースビルドでデバッグメッセージを除去するか否か
     uglify     : true  // リリースビルドで圧縮するか否か
   }
-
 }
 
 // 個人用設定ファイル読み込み
 const config  = require('./src/config').config
-
-//console.log(project)
-//console.log(config)
-
-// ディレクトリ設定
-const dir     = {
-  src    : './src/',
-  dist   : './dist/',
-  assets : 'assets/',
-  images : {
-    src : './src/images/',
-    dist: './dist/assets/images/'
-  }
-}
 
 // NODE_ENVに指定がなければ開発モードをデフォルトにする
 const envOption = {
@@ -65,6 +79,10 @@ const options      = minimist(process.argv.slice(2), envOption)
 const isProduction = (options.env === 'production') ? true : false
 console.log('[build env]', options.env, '[is production]', isProduction)
 
+// リビジョン番号の生成
+const revision = crypto.randomBytes(8).toString('hex')
+console.log('build revision:', revision)
+
 /* ============================================ */
 /* --------------- 各タスクの処理 --------------- */
 /* ============================================ */
@@ -72,9 +90,12 @@ console.log('[build env]', options.env, '[is production]', isProduction)
 // ローカル上で開発用サーバ起動
 task('server', () => {
   browser.init({
-    server    : {baseDir: dir.dist},
-    ghostMode : config.server.ghost,
-    open      : config.server.open
+    server: {
+      baseDir   : dir.dist,
+      ghostMode : config.server.ghostMode,
+      open      : config.server.open,
+      startPath : config.server.startPath
+    }
   })
 })
 
@@ -90,6 +111,13 @@ task('ejs', (done) => {
   }))
   // 拡張子設定
   .pipe($.ejs({}, {}, {"ext": "."+project.ejs.ext}))
+  // キャッシュ避けリビジョン付与
+  .pipe($.if(project.ejs.revision,
+    $.replace(/\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g, '.$1?rev='+revision)
+  ))
+  .pipe($.if(project.ejs.prettier,
+    $.prettier(project.ejs.options)
+  ))
   // 出力先ディレクトリ
   .pipe(dest(dir.dist))
   // ブラウザを更新する
@@ -100,7 +128,7 @@ task('ejs', (done) => {
 
 // SASSコンパイル
 task('sass', (done) => {
-  return src(dir.src + 'scss/**/*.scss', {sourcemaps: true})
+  return src(dir.src + 'scss/**/*.scss', {sourcemaps: project.scss.sourcemaps})
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
@@ -112,11 +140,11 @@ task('sass', (done) => {
   // cssプラグインの適用
   .pipe($.postcss(project.scss.plugins))
   // developなら整形する
-  //.pipe($.if(!isProduction, $.csscomb()))
+  .pipe($.if(!isProduction && project.scss.csscomb, $.csscomb()))
   // productionなら圧縮する
-  .pipe($.if(isProduction, $.cleanCss()))
+  .pipe($.if(isProduction && project.scss.minify, $.cleanCss()))
   // 出力先ディレクトリ
-  .pipe(dest(dir.dist+dir.assets+'css', {sourcemaps: '../maps/'}))
+  .pipe(dest(dir.dist+dir.css, {sourcemaps: '../maps/'}))
   // Sassを更新したらリロードせずに直接反映させる
   .pipe(browser.stream())
   // タスクの終了宣言
@@ -143,7 +171,7 @@ task('js', (done) => {
   // productionなら圧縮する
   .pipe($.if(isProduction && project.js.uglify, $.uglify()))
   // 出力先ディレクトリ
-  .pipe(dest(dir.dist+dir.assets+'js'))
+  .pipe(dest(dir.dist+dir.js))
   // ブラウザを更新する
   .pipe(browser.stream())
   // タスクの終了宣言
@@ -152,13 +180,13 @@ task('js', (done) => {
 
 // 画像圧縮
 task('images', (done) => {
-  return src([dir.images.src + '/**/*'])
+  return src([dir.src + 'images/**/*'])
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
     errorHandler: $.notify.onError("Error: <%= error.message %>")
   }))
   // 変更のあったファイルのみビルド対象にする
-  .pipe($.changed(dir.images.dist))
+  .pipe($.changed(dir.dist + dir.images))
   // 画像圧縮処理とオプション
   .pipe($.imagemin([
     $.imagemin.gifsicle(),
@@ -172,7 +200,7 @@ task('images', (done) => {
   // メタ情報再削除
   .pipe($.imagemin())
   // 出力先ディレクトリ
-  .pipe(dest(dir.images.dist))
+  .pipe(dest(dir.dist + dir.images))
   // ブラウザを更新する
   .pipe(browser.stream())
   // タスクの終了宣言
