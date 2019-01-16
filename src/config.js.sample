@@ -4,7 +4,7 @@ const config = {
   server: {
 
     // trueでデバイス間のクリック・スクロールなども同期させる
-    ghostMode: true,
+    ghostMode: false,
 
     // external : プライベートIPでブラウザ起動
     // internal : localhostでブラウザ起動

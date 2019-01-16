@@ -9,6 +9,13 @@ https://nodejs.org/ja/download/
 制作時点でLTS（安定版）最新の`ver 10.15.0`を前提としています。
 古いバージョンを使用している場合使用するパッケージによっては不具合が出る可能性があるため、特別な理由がなければ上記バージョンを使用してください。
 
+Node.jsのバージョン管理が出来るようにしておくのを推奨
+
+|OS|名称|参考サイト|
+|:---|:---|:---|
+|Win|`nodist`|https://qiita.com/RyutaKojima/items/00c9653a609f739e78c7|
+|Mac|`ndenv`|https://qiita.com/nishina555/items/d5a928f3314a02e15929|
+
 ## インストールまで
 
 Windowsは「コマンドプロンプト」または「PowerShell」を使用します。
@@ -29,7 +36,7 @@ CLIで以下を入力：
 
 CLIで以下を入力：
 
-`npm install`
+`npm install` または `npm i`
 
 ### コンフィグ
 
@@ -49,14 +56,19 @@ CLIで以下を入力：
 ||[js]|JSファイル格納先|
 ||[scss]|SCSSファイル格納先|
 ||config.js|コンフィグファイル|
-|.csscomb|||
-|.editorconfig|||
-|.gitignore|||
-|.node-version|||
-|gulpfile.js|||
-|package-lock.json|||
-|package.json|||
-|readme.md|||
+|.csscomb||css整形方法指定ファイル|
+|.editorconfig||エディタが対応していれば適用されます|
+|.gitignore||gitに含めないほうがいいものは予め指定してあります|
+|.node-version||Node.jsのバージョンを強制出来ます|
+|gulpfile.js||処理記述ファイル|
+|package.json||パッケージ、コマンド登録ファイル|
+|package-lock.json||パッケージの中のパッケージをバージョン管理|
+|readme.md||このファイルです|
+
+### 他プロジェクトに取り込む場合
+
+* `.git`ディレクトリはgitが使用するファイル郡なので、他プロジェクトにコピーしないでください。
+* `.node_modules`フォルダはインストールしたパッケージが入るディレクトリなので、コピーしないでください。（インストール作業を行えば各人の環境に生成されます）
 
 ## タスク
 
@@ -66,7 +78,7 @@ CLIで以下を入力：
 
 ローカルに開発用のサーバを立て、ソースに変更があった場合はその内容を自動で反映するよう監視します。デフォルトで3000番のポートを使用しますが、埋まっていた場合は自動で空いているポートを探して使用します。
 
-`src/config.js`で開き方の指定が出来ます。
+`src/config.js`で開き方の指定や挙動の変更が出来ます。
 
 * ghostMode
 
@@ -91,6 +103,13 @@ ejsファイルの構文エラーでコンパイルが失敗した場合、出�
 
 オプションでキャッシュ避けのパラメータ付与、HTMLの整形が出来ます。
 
+|オプション|デフォルト|内容|
+|:---|:---|:---|
+|ext|`html`||
+|revision|`true`|画像やcss/jsのファイル指定時に`.jpg?rev`と書くと、ビルド時にハッシュを付与する|
+|prettier|`false`|HTML整形する。整形方法はoptionsで指定|
+
+
 ### scss
 
 * scssファイルをcssファイルにコンパイルします。
@@ -102,11 +121,11 @@ ejsファイルの構文エラーでコンパイルが失敗した場合、出�
 |postcss-autoprefixer|ベンダープリフィックスを付与する|`package.json`の`browserslist`準拠|
 |postcss-css-mq-packer|メディアクエリ記述を一箇所にまとめる||
 |postcss-flex-bugs-fixes|flexbox関連のバグを修正する||
-|postcss-cachebuster|background-imageのキャッシュ回避|`MD5`/`timestamp`|
+|postcss-cachebuster|background-imageのキャッシュ回避|`checksum`/`timestamp`|
 |gulp-clean-css|CSSファイルのミニファイ処理（圧縮）|`production`モードのみ有効|
-|gulp-sass-glob|scssのimport時にワイルドカードを使えるようにする||
+|gulp-sass-glob|scssのimport時に一括指定|`@import '/フォルダ/**` でフォルダ内をimportする|
 
-以下は組み込んではありますが、諸事情により使用していません。
+以下は組み込んではありますが、諸事情により使用していません。soucemapsを使用停止、または実質的に使用しないということであれば使用しても支障はありません。
 
 |パッケージ|処理内容|停止理由|
 |:---|:---|:---|
@@ -128,7 +147,7 @@ ES6->ES5にトランスパイルをして出力します。
 
 画像ファイルを圧縮して出力します。
 
-画像自体の圧縮と、メタ情報の削除を行います。設定によって圧縮率の変更も可能です。
+画像自体の圧縮と、メタ情報の削除を行います。設定によって圧縮率の変更も可能です。既に圧縮済みのファイルは再処理しません。
 
 ### assets
 
