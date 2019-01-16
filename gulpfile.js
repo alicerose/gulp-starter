@@ -5,7 +5,7 @@ const del      = require('del')
 const minimist = require('minimist')
 
 // gulp系統のパッケージ読み込み
-const {watch, series, task, src, dest} = require('gulp');
+const {watch, series, parallel, task, src, dest} = require('gulp');
 const $ = require('gulp-load-plugins')({
   DEBUG: false,
   pattern: [
@@ -42,8 +42,8 @@ const project = {
     prettier : false, // HTMLを整形するか
     options  : {
       // https://prettier.io/docs/en/options.html
-      tabWidth : 2,
-      useTabs : false,
+      tabWidth                  : 2,
+      useTabs                   : false,
       htmlWhitespaceSensitivity : 'css'
     }
   },
@@ -242,7 +242,7 @@ task('watch', (done) => {
 })
 
 // ファイルの一括処理
-task('build', series(
+task('build', parallel(
   'ejs',
   'sass',
   'js',
