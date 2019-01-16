@@ -4,12 +4,14 @@ const config = {
   server: {
 
     // trueでデバイス間のクリック・スクロールなども同期させる
-    ghost: true,
+    ghostMode: false,
 
     // external : プライベートIPでブラウザ起動
     // internal : localhostでブラウザ起動
-    open : "internal"
+    open : "internal",
 
+    // デフォルトで開くパスを変更する場合は以下を修正
+    startPath : '/'
   }
 }
 

@@ -5,7 +5,7 @@ const del      = require('del')
 const minimist = require('minimist')
 
 // gulp系統のパッケージ読み込み
-const {watch, series, task, src, dest} = require('gulp');
+const {watch, series, parallel, task, src, dest} = require('gulp');
 const $ = require('gulp-load-plugins')({
   DEBUG: false,
   pattern: [
@@ -42,8 +42,8 @@ const project = {
     prettier : false, // HTMLを整形するか
     options  : {
       // https://prettier.io/docs/en/options.html
-      tabWidth : 2,
-      useTabs : false,
+      tabWidth                  : 2,
+      useTabs                   : false,
       htmlWhitespaceSensitivity : 'css'
     }
   },
@@ -115,6 +115,7 @@ task('ejs', (done) => {
   .pipe($.if(project.ejs.revision,
     $.replace(/\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g, '.$1?rev='+revision)
   ))
+  // オプションが有効になっていれば整形する
   .pipe($.if(project.ejs.prettier,
     $.prettier(project.ejs.options)
   ))
@@ -216,6 +217,7 @@ task('assets', (done) => {
   ], {
     base: dir.src + 'assets'
   })
+  // 出力先
   .pipe(dest(dir.dist))
   // タスクの終了宣言
   done()
@@ -240,32 +242,23 @@ task('watch', (done) => {
 })
 
 // ファイルの一括処理
-task('build', series(
+task('build', parallel(
   'ejs',
   'sass',
   'js',
   'images',
   'assets'
-), (done) => {
-  console.log('start build task')
-  done()
-})
+))
 
 // 通常タスク
 task('default', series(
   'build',
   'watch',
   'server'
-),(done) => {
-  console.log('start default task')
-  done()
-})
+))
 
 // production環境用の一括処理
 task('release', series(
   'clean',
   'build'
-), (done) => {
-  console.log('start release task')
-  done()
-})
+))
