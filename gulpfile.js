@@ -36,7 +36,10 @@ const dir     = {
 
 // プロジェクト設定
 const project = {
-  ejs: {
+
+  template : 'edge', // 使用するテンプレートエンジンの選択（ejs/edge)
+
+  html: {
     ext      : 'html',    // EJSの出力拡張子
     revision : true, // キャッシュ避けリビジョン付与
     prettier : false, // HTMLを整形するか
@@ -110,14 +113,42 @@ task('ejs', (done) => {
     errorHandler: $.notify.onError("Error: <%= error.message %>")
   }))
   // 拡張子設定
-  .pipe($.ejs({}, {}, {"ext": "."+project.ejs.ext}))
+  .pipe($.ejs({}, {}, {"ext": "."+project.html.ext}))
   // キャッシュ避けリビジョン付与
-  .pipe($.if(project.ejs.revision,
+  .pipe($.if(project.html.revision,
     $.replace(/\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g, '.$1?rev='+revision)
   ))
   // オプションが有効になっていれば整形する
-  .pipe($.if(project.ejs.prettier,
-    $.prettier(project.ejs.options)
+  .pipe($.if(project.html.prettier,
+    $.prettier(project.html.options)
+  ))
+  // 出力先ディレクトリ
+  .pipe(dest(dir.dist))
+  // ブラウザを更新する
+  .pipe(browser.stream())
+  // タスクの終了宣言
+  done()
+})
+
+// EDGEコンパイル
+task('edge', (done) => {
+  return src([
+    dir.src + 'edge/**/*.edge',
+    '!' + dir.src + '/edge/**/_*.edge'
+  ])
+  // エラーの場合は停止せずに通知を出す
+  .pipe($.plumber({
+    errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
+  // コンパイル
+  .pipe($.edgejs())
+  // キャッシュ避けリビジョン付与
+  .pipe($.if(project.html.revision,
+    $.replace(/\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g, '.$1?rev='+revision)
+  ))
+  // オプションが有効になっていれば整形する
+  .pipe($.if(project.html.prettier,
+    $.prettier(project.html.options)
   ))
   // 出力先ディレクトリ
   .pipe(dest(dir.dist))
@@ -233,7 +264,7 @@ task('clean', (done) => {
 
 // 監視対象ファイルの指定
 task('watch', (done) => {
-  watch([dir.src + 'ejs/**/*'], task('ejs'))
+  watch([dir.src + project.template + '/**/*'], task(project.template))
   watch([dir.src + 'scss/**/*'], task('sass'))
   watch([dir.src + 'js/**/*'], task('js'))
   watch([dir.src + 'images/**/*'], task('images'))
@@ -243,7 +274,7 @@ task('watch', (done) => {
 
 // ファイルの一括処理
 task('build', parallel(
-  'ejs',
+  project.template,
   'sass',
   'js',
   'images',
