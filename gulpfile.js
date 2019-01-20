@@ -52,6 +52,13 @@ const project = {
   },
 
   scss: {
+    // 出力形式
+    // 0 : nested     ネスト形式
+    // 1 : expanded   展開状態（一般的なCSS方式）
+    // 2 : compact    1行1クラス
+    // 3 : compressed 圧縮済み
+    output     : 1,
+
     csscomb    : false, // .csscomb.jsonの内容で整形するか
     minify     : true,  // リリースビルドで圧縮するか否か
     sourcemaps : true,  // sourcemapsの使用
@@ -67,6 +74,13 @@ const project = {
     babel      : true, // トランスパイルするか否か
     stripDebug : true, // リリースビルドでデバッグメッセージを除去するか否か
     uglify     : true  // リリースビルドで圧縮するか否か
+  },
+
+  images: {
+    // 圧縮率
+    gif : 1,  // 1^3
+    jpg : 80, // 0^100
+    png : 80  // 0^100
   }
 }
 
@@ -103,7 +117,7 @@ task('server', () => {
 })
 
 // EJSコンパイル
-task('ejs', (done) => {
+task('ejs', () => {
   return src([
     dir.src + 'ejs/**/*.ejs',
     '!' + dir.src + '/ejs/**/_*.ejs'
@@ -126,12 +140,10 @@ task('ejs', (done) => {
   .pipe(dest(dir.dist))
   // ブラウザを更新する
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 })
 
 // EDGEコンパイル
-task('edge', (done) => {
+task('edge', () => {
   return src([
     dir.src + 'edge/**/*.edge',
     '!' + dir.src + '/edge/**/_*.edge'
@@ -154,12 +166,11 @@ task('edge', (done) => {
   .pipe(dest(dir.dist))
   // ブラウザを更新する
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 })
 
 // SASSコンパイル
-task('sass', (done) => {
+task('sass', () => {
+  const format = ['nested','expanded','compact','compressed']
   return src(dir.src + 'scss/**/*.scss', {sourcemaps: project.scss.sourcemaps})
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
@@ -167,8 +178,8 @@ task('sass', (done) => {
   }))
   // scssファイルをまとめて読み込む
   .pipe($.sassGlob())
-  // コンパイル
-  .pipe($.sass({outputStyle:'expanded'}))
+  // コンパイルと出力フォーマットの指定
+  .pipe($.sass({outputStyle: format[project.scss.output]}))
   // cssプラグインの適用
   .pipe($.postcss(project.scss.plugins))
   // developなら整形する
@@ -179,12 +190,10 @@ task('sass', (done) => {
   .pipe(dest(dir.dist+dir.css, {sourcemaps: '../maps/'}))
   // Sassを更新したらリロードせずに直接反映させる
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 });
 
 // JSのトランスパイル・圧縮
-task('js', (done) => {
+task('js', () => {
   return src([
     dir.src + '/js/**/*.js'
   ])
@@ -206,12 +215,10 @@ task('js', (done) => {
   .pipe(dest(dir.dist+dir.js))
   // ブラウザを更新する
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 })
 
 // 画像圧縮
-task('images', (done) => {
+task('images', () => {
   return src([dir.src + 'images/**/*'])
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
@@ -221,9 +228,9 @@ task('images', (done) => {
   .pipe($.changed(dir.dist + dir.images))
   // 画像圧縮処理とオプション
   .pipe($.imagemin([
-    $.imagemin.gifsicle(),
-    $.imageminMozjpeg({ quality: 80 }),
-    $.imageminPngquant(),
+    $.imagemin.gifsicle({optimizationLevel:project.images.gif}),
+    $.imageminMozjpeg({quality:project.images.jpg}),
+    $.imageminPngquant({quality:project.images.png}),
     $.imagemin.svgo()
   ], {
     // 変換ログ出力
@@ -235,12 +242,10 @@ task('images', (done) => {
   .pipe(dest(dir.dist + dir.images))
   // ブラウザを更新する
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 })
 
 //
-task('assets', (done) => {
+task('assets', () => {
   return src([
     dir.src + dir.assets + '**/*',
     dir.src + dir.assets + '*.*',
@@ -250,15 +255,11 @@ task('assets', (done) => {
   })
   // 出力先
   .pipe(dest(dir.dist))
-  // タスクの終了宣言
-  done()
 })
 
 // コンパイル済みのファイル削除
-task('clean', (done) => {
+task('clean', () => {
   return del([dir.dist])
-  // タスクの終了宣言
-  done()
 })
 
 
