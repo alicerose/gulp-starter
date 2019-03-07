@@ -3,6 +3,7 @@ const browser  = require('browser-sync')
 const crypto   = require('crypto')
 const del      = require('del')
 const minimist = require('minimist')
+const fs = require('fs')
 
 // gulp系統のパッケージ読み込み
 const {watch, series, parallel, task, src, dest} = require('gulp');
@@ -37,7 +38,7 @@ const dir     = {
 // プロジェクト設定
 const project = {
 
-  template : 'edge', // 使用するテンプレートエンジンの選択（ejs/edge)
+  template : 'ejs', // 使用するテンプレートエンジンの選択（ejs/edge)
 
   html: {
     ext      : 'html',    // EJSの出力拡張子
@@ -85,7 +86,36 @@ const project = {
 }
 
 // 個人用設定ファイル読み込み
-const config  = require('./src/config').config
+const configFile = {
+  'origin'  : './src/config.js.sample',
+  'file' : './src/config.js'
+}
+const configExistCheck = (file=configFile.file, origin=configFile.origin) => {
+  let loaddata
+  console.log(`[config] ${file} exist check...`)
+  try {
+    fs.statSync(file)
+    console.log(`[config] ${file} found.`)
+  } catch(err) {
+    if(err.code === 'ENOENT') {
+      console.log(`[config] ${file} not found.`)
+      fs.copyFile(origin, file, (err) => {
+        if (err) {
+          console.log(err.stack);
+        }
+        else {
+          console.log(`[config] generated from ${origin}.`)
+        }
+      })
+    }
+  } finally {
+    console.log(`[config] ${file} loaded.`)
+    loaddata = require(file).config
+    console.log(file, loaddata)
+    return loaddata
+  }
+}
+const config = configExistCheck()
 
 // NODE_ENVに指定がなければ開発モードをデフォルトにする
 const envOption = {
@@ -274,7 +304,7 @@ task('watch', (done) => {
 })
 
 // ファイルの一括処理
-task('build', parallel(
+task('build', series(
   project.template,
   'sass',
   'js',
