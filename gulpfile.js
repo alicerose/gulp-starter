@@ -3,6 +3,7 @@ const browser  = require('browser-sync')
 const crypto   = require('crypto')
 const del      = require('del')
 const minimist = require('minimist')
+const fs = require('fs')
 
 // gulp系統のパッケージ読み込み
 const {watch, series, parallel, task, src, dest} = require('gulp');
@@ -37,12 +38,12 @@ const dir     = {
 // プロジェクト設定
 const project = {
 
-  template : 'edge', // 使用するテンプレートエンジンの選択（ejs/edge)
+  template : 'ejs', // 使用するテンプレートエンジンの選択（ejs/edge)
 
   html: {
-    ext      : 'html',    // EJSの出力拡張子
-    revision : true, // キャッシュ避けリビジョン付与
-    prettier : false, // HTMLを整形するか
+    ext      : 'html', // EJSの出力拡張子
+    revision : true,   // キャッシュ避けリビジョン付与
+    prettier : false,  // HTMLを整形するか
     options  : {
       // https://prettier.io/docs/en/options.html
       tabWidth                  : 2,
@@ -84,8 +85,36 @@ const project = {
   }
 }
 
-// 個人用設定ファイル読み込み
-const config  = require('./src/config').config
+// 個人用設定ファイルの存在確認
+const configFile = {
+  'origin' : './src/config.sample.js', // サンプルファイル
+  'file'   : './src/config.js'         // コンフィグファイル
+}
+const configExistCheck = (file=configFile.file, origin=configFile.origin) => {
+  let configFlag
+  console.log(`[config] Config file exist check...`)
+  try {
+    fs.statSync(file)
+    console.log(`[config] Config file found.`)
+    configFlag = true
+  }
+  catch(err) {
+    if(err.code === 'ENOENT') {
+      console.log(`[config] Config file not found.`)
+
+      // ファイルが存在しなければサンプルファイルをコピーする
+      fs.copyFile(origin, file, (err) => {
+        if (err) throw err
+        console.log(`[config] generated from ${origin} -> ${file}.`)
+      })
+      configFlag = false
+    }
+  }
+  finally {
+    return configFlag
+  }
+}
+const configExist = configExistCheck()
 
 // NODE_ENVに指定がなければ開発モードをデフォルトにする
 const envOption = {
@@ -104,16 +133,20 @@ console.log('build revision:', revision)
 /* --------------- 各タスクの処理 --------------- */
 /* ============================================ */
 
+// コンフィグファイルから設定をロード
+task('config', (done) => {
+  config = require(configFile.file).config
+  if(config.server.proxy == undefined){
+    config.server.server.baseDir = dir.dist
+  } else {
+    delete config.server.server
+  }
+  done()
+})
+
 // ローカル上で開発用サーバ起動
 task('server', () => {
-  browser.init({
-    server: {
-      baseDir   : dir.dist,
-      ghostMode : config.server.ghostMode,
-      open      : config.server.open,
-      startPath : config.server.startPath
-    }
-  })
+  browser.init(config.server)
 })
 
 // EJSコンパイル
@@ -274,7 +307,8 @@ task('watch', (done) => {
 })
 
 // ファイルの一括処理
-task('build', parallel(
+task('build', series(
+  'config',
   project.template,
   'sass',
   'js',
