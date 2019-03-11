@@ -2,8 +2,9 @@
 const browser  = require('browser-sync')
 const crypto   = require('crypto')
 const del      = require('del')
+const fs       = require('fs')
 const minimist = require('minimist')
-const fs = require('fs')
+const util     = require('util')
 
 // gulp系統のパッケージ読み込み
 const {watch, series, parallel, task, src, dest} = require('gulp');
@@ -91,12 +92,10 @@ const configFile = {
   'file'   : './src/config.js'         // コンフィグファイル
 }
 const configExistCheck = (file=configFile.file, origin=configFile.origin) => {
-  let configFlag
   console.log(`[config] Config file exist check...`)
   try {
     fs.statSync(file)
     console.log(`[config] Config file found.`)
-    configFlag = true
   }
   catch(err) {
     if(err.code === 'ENOENT') {
@@ -107,14 +106,11 @@ const configExistCheck = (file=configFile.file, origin=configFile.origin) => {
         if (err) throw err
         console.log(`[config] generated from ${origin} -> ${file}.`)
       })
-      configFlag = false
     }
-  }
-  finally {
-    return configFlag
   }
 }
 const configExist = configExistCheck()
+const copyConfigAsync = util.promisify(fs.copyFile)
 
 // NODE_ENVに指定がなければ開発モードをデフォルトにする
 const envOption = {
@@ -134,14 +130,29 @@ console.log('build revision:', revision)
 /* ============================================ */
 
 // コンフィグファイルから設定をロード
+let config
 task('config', (done) => {
   config = require(configFile.file).config
-  if(config.server.proxy == undefined){
-    config.server.server.baseDir = dir.dist
+  if(config.version == undefined){
+    console.log('[config] incompatible version detected.')
+    copyConfigAsync(configFile.origin,configFile.file).then(() => {
+      console.log(`[config] replaced from ${configFile.origin} -> ${configFile.file}.`)
+      config = require(configFile.origin).config
+      if(config.server.proxy == undefined){
+        config.server.server.baseDir = dir.dist
+      } else {
+        delete config.server.server
+      }
+      done()
+    }).catch((err) => console.error(err))
   } else {
-    delete config.server.server
+    if(config.server.proxy == undefined){
+      config.server.server.baseDir = dir.dist
+    } else {
+      delete config.server.server
+    }
+    done()
   }
-  done()
 })
 
 // ローカル上で開発用サーバ起動
