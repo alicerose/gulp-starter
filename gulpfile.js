@@ -3,6 +3,7 @@ const browser  = require('browser-sync')
 const crypto   = require('crypto')
 const del      = require('del')
 const minimist = require('minimist')
+const fs = require('fs')
 
 // gulp系統のパッケージ読み込み
 const {watch, series, parallel, task, src, dest} = require('gulp');
@@ -36,10 +37,13 @@ const dir     = {
 
 // プロジェクト設定
 const project = {
-  ejs: {
-    ext      : 'html',    // EJSの出力拡張子
-    revision : true, // キャッシュ避けリビジョン付与
-    prettier : false, // HTMLを整形するか
+
+  template : 'ejs', // 使用するテンプレートエンジンの選択（ejs/edge)
+
+  html: {
+    ext      : 'html', // EJSの出力拡張子
+    revision : true,   // キャッシュ避けリビジョン付与
+    prettier : false,  // HTMLを整形するか
     options  : {
       // https://prettier.io/docs/en/options.html
       tabWidth                  : 2,
@@ -49,6 +53,13 @@ const project = {
   },
 
   scss: {
+    // 出力形式
+    // 0 : nested     ネスト形式
+    // 1 : expanded   展開状態（一般的なCSS方式）
+    // 2 : compact    1行1クラス
+    // 3 : compressed 圧縮済み
+    output     : 1,
+
     csscomb    : false, // .csscomb.jsonの内容で整形するか
     minify     : true,  // リリースビルドで圧縮するか否か
     sourcemaps : true,  // sourcemapsの使用
@@ -64,11 +75,46 @@ const project = {
     babel      : true, // トランスパイルするか否か
     stripDebug : true, // リリースビルドでデバッグメッセージを除去するか否か
     uglify     : true  // リリースビルドで圧縮するか否か
+  },
+
+  images: {
+    // 圧縮率
+    gif : 1,  // 1^3
+    jpg : 80, // 0^100
+    png : 80  // 0^100
   }
 }
 
-// 個人用設定ファイル読み込み
-const config  = require('./src/config').config
+// 個人用設定ファイルの存在確認
+const configFile = {
+  'origin' : './src/config.sample.js', // サンプルファイル
+  'file'   : './src/config.js'         // コンフィグファイル
+}
+const configExistCheck = (file=configFile.file, origin=configFile.origin) => {
+  let configFlag
+  console.log(`[config] Config file exist check...`)
+  try {
+    fs.statSync(file)
+    console.log(`[config] Config file found.`)
+    configFlag = true
+  }
+  catch(err) {
+    if(err.code === 'ENOENT') {
+      console.log(`[config] Config file not found.`)
+
+      // ファイルが存在しなければサンプルファイルをコピーする
+      fs.copyFile(origin, file, (err) => {
+        if (err) throw err
+        console.log(`[config] generated from ${origin} -> ${file}.`)
+      })
+      configFlag = false
+    }
+  }
+  finally {
+    return configFlag
+  }
+}
+const configExist = configExistCheck()
 
 // NODE_ENVに指定がなければ開発モードをデフォルトにする
 const envOption = {
@@ -87,20 +133,24 @@ console.log('build revision:', revision)
 /* --------------- 各タスクの処理 --------------- */
 /* ============================================ */
 
+// コンフィグファイルから設定をロード
+task('config', (done) => {
+  config = require(configFile.file).config
+  if(config.server.proxy == undefined){
+    config.server.server.baseDir = dir.dist
+  } else {
+    delete config.server.server
+  }
+  done()
+})
+
 // ローカル上で開発用サーバ起動
 task('server', () => {
-  browser.init({
-    server: {
-      baseDir   : dir.dist,
-      ghostMode : config.server.ghostMode,
-      open      : config.server.open,
-      startPath : config.server.startPath
-    }
-  })
+  browser.init(config.server)
 })
 
 // EJSコンパイル
-task('ejs', (done) => {
+task('ejs', () => {
   return src([
     dir.src + 'ejs/**/*.ejs',
     '!' + dir.src + '/ejs/**/_*.ejs'
@@ -110,25 +160,50 @@ task('ejs', (done) => {
     errorHandler: $.notify.onError("Error: <%= error.message %>")
   }))
   // 拡張子設定
-  .pipe($.ejs({}, {}, {"ext": "."+project.ejs.ext}))
+  .pipe($.ejs({}, {}, {"ext": "."+project.html.ext}))
   // キャッシュ避けリビジョン付与
-  .pipe($.if(project.ejs.revision,
+  .pipe($.if(project.html.revision,
     $.replace(/\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g, '.$1?rev='+revision)
   ))
   // オプションが有効になっていれば整形する
-  .pipe($.if(project.ejs.prettier,
-    $.prettier(project.ejs.options)
+  .pipe($.if(project.html.prettier,
+    $.prettier(project.html.options)
   ))
   // 出力先ディレクトリ
   .pipe(dest(dir.dist))
   // ブラウザを更新する
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
+})
+
+// EDGEコンパイル
+task('edge', () => {
+  return src([
+    dir.src + 'edge/**/*.edge',
+    '!' + dir.src + '/edge/**/_*.edge'
+  ])
+  // エラーの場合は停止せずに通知を出す
+  .pipe($.plumber({
+    errorHandler: $.notify.onError("Error: <%= error.message %>")
+  }))
+  // コンパイル
+  .pipe($.edgejs())
+  // キャッシュ避けリビジョン付与
+  .pipe($.if(project.html.revision,
+    $.replace(/\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g, '.$1?rev='+revision)
+  ))
+  // オプションが有効になっていれば整形する
+  .pipe($.if(project.html.prettier,
+    $.prettier(project.html.options)
+  ))
+  // 出力先ディレクトリ
+  .pipe(dest(dir.dist))
+  // ブラウザを更新する
+  .pipe(browser.stream())
 })
 
 // SASSコンパイル
-task('sass', (done) => {
+task('sass', () => {
+  const format = ['nested','expanded','compact','compressed']
   return src(dir.src + 'scss/**/*.scss', {sourcemaps: project.scss.sourcemaps})
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
@@ -136,8 +211,8 @@ task('sass', (done) => {
   }))
   // scssファイルをまとめて読み込む
   .pipe($.sassGlob())
-  // コンパイル
-  .pipe($.sass({outputStyle:'expanded'}))
+  // コンパイルと出力フォーマットの指定
+  .pipe($.sass({outputStyle: format[project.scss.output]}))
   // cssプラグインの適用
   .pipe($.postcss(project.scss.plugins))
   // developなら整形する
@@ -148,12 +223,10 @@ task('sass', (done) => {
   .pipe(dest(dir.dist+dir.css, {sourcemaps: '../maps/'}))
   // Sassを更新したらリロードせずに直接反映させる
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 });
 
 // JSのトランスパイル・圧縮
-task('js', (done) => {
+task('js', () => {
   return src([
     dir.src + '/js/**/*.js'
   ])
@@ -175,12 +248,10 @@ task('js', (done) => {
   .pipe(dest(dir.dist+dir.js))
   // ブラウザを更新する
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 })
 
 // 画像圧縮
-task('images', (done) => {
+task('images', () => {
   return src([dir.src + 'images/**/*'])
   // エラーの場合は停止せずに通知を出す
   .pipe($.plumber({
@@ -190,9 +261,9 @@ task('images', (done) => {
   .pipe($.changed(dir.dist + dir.images))
   // 画像圧縮処理とオプション
   .pipe($.imagemin([
-    $.imagemin.gifsicle(),
-    $.imageminMozjpeg({ quality: 80 }),
-    $.imageminPngquant(),
+    $.imagemin.gifsicle({optimizationLevel:project.images.gif}),
+    $.imageminMozjpeg({quality:project.images.jpg}),
+    $.imageminPngquant({quality:project.images.png}),
     $.imagemin.svgo()
   ], {
     // 変換ログ出力
@@ -204,12 +275,10 @@ task('images', (done) => {
   .pipe(dest(dir.dist + dir.images))
   // ブラウザを更新する
   .pipe(browser.stream())
-  // タスクの終了宣言
-  done()
 })
 
 //
-task('assets', (done) => {
+task('assets', () => {
   return src([
     dir.src + dir.assets + '**/*',
     dir.src + dir.assets + '*.*',
@@ -219,21 +288,17 @@ task('assets', (done) => {
   })
   // 出力先
   .pipe(dest(dir.dist))
-  // タスクの終了宣言
-  done()
 })
 
 // コンパイル済みのファイル削除
-task('clean', (done) => {
+task('clean', () => {
   return del([dir.dist])
-  // タスクの終了宣言
-  done()
 })
 
 
 // 監視対象ファイルの指定
 task('watch', (done) => {
-  watch([dir.src + 'ejs/**/*'], task('ejs'))
+  watch([dir.src + project.template + '/**/*'], task(project.template))
   watch([dir.src + 'scss/**/*'], task('sass'))
   watch([dir.src + 'js/**/*'], task('js'))
   watch([dir.src + 'images/**/*'], task('images'))
@@ -242,8 +307,9 @@ task('watch', (done) => {
 })
 
 // ファイルの一括処理
-task('build', parallel(
-  'ejs',
+task('build', series(
+  'config',
+  project.template,
   'sass',
   'js',
   'images',
