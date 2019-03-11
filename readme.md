@@ -14,7 +14,11 @@ Node.jsのバージョン管理が出来るようにしておくのを推奨
 |OS|名称|参考サイト|
 |:---|:---|:---|
 |Win|`nodist`|https://qiita.com/RyutaKojima/items/00c9653a609f739e78c7|
-|Mac|`ndenv`|https://qiita.com/nishina555/items/d5a928f3314a02e15929|
+|Mac|~~`ndenv`~~|~~https://qiita.com/nishina555/items/d5a928f3314a02e15929~~|
+|Mac|`nodenv`|https://qiita.com/daskepon/items/e47f7ee3ade252cdf2e6|
+
+`ndenv`はメンテナンスが終了したとのこと
+https://qiita.com/yurakawa/items/508df9fdf2ea35661aa5
 
 ## インストールまで
 
@@ -40,10 +44,17 @@ CLIで以下を入力：
 
 ### コンフィグ
 
-`src/config.js.sample` -> `src/config.js`にリネーム
+~~`src/config.js.sample` -> `src/config.js`にリネーム~~
 
-このファイルはgitでは共有されません。（.gitignoreに指定されています）
-ユーザ間で異なる設定になる可能性のあるものを記述していますが、よくわからなければリネームだけしておけば問題ありません。
+`v4.2.0` で以下のように変更しました。
+
+* エディタでjsファイルと認識されずに哀しみを背負っていたので、サンプルファイル名を`config.js.sample`から`config.sample.js`へ変更しました。
+* 起動時に`src/config.js`が存在しなかった場合、`src/config.sample.js`を元に作成するようにしました。
+* 設定項目を追記しました。
+  * https/proxy/port
+
+`config.js`はGit上で管理されていません。（.gitignoreに指定されています）
+ユーザ間で異なる設定が使われる可能性のある設定項目をまとめていますので、各自の環境に合わせて適時設定の上使用してください。
 
 ## ディレクトリ構造
 
@@ -70,6 +81,62 @@ CLIで以下を入力：
 * `.git`ディレクトリはgitが使用するファイル郡なので、他プロジェクトにコピーしないでください。
 * `.node_modules`フォルダはインストールしたパッケージが入るディレクトリなので、コピーしないでください。（インストール作業を行えば各人の環境に生成されます）
 
+## プロジェクト設定
+
+`gulpfile.js:39`でプロジェクト間の共通設定が出来ます。ある程度見ただけで設定出来るようにコメントも付与してありますので、参考の上設定ください。特に必要性がなければ編集せずそのまま使用して頂いて構いません。基本的にはプロジェクト開始以降は変更をするべきものではないため、環境構築者が事前に設定したものを共通で使用すべきです。変更の必要が出てきた場合は、共同作業者と協議の上変更を実施してください。
+
+```js:gulpfile.js
+// プロジェクト設定
+const project = {
+
+  template : 'ejs', // 使用するテンプレートエンジンの選択（ejs/edge)
+
+  html: {
+    ext      : 'html', // EJSの出力拡張子
+    revision : true,   // キャッシュ避けリビジョン付与
+    prettier : false,  // HTMLを整形するか
+    options  : {
+      // https://prettier.io/docs/en/options.html
+      tabWidth                  : 2,
+      useTabs                   : false,
+      htmlWhitespaceSensitivity : 'css'
+    }
+  },
+
+  scss: {
+    // 出力形式
+    // 0 : nested     ネスト形式
+    // 1 : expanded   展開状態（一般的なCSS方式）
+    // 2 : compact    1行1クラス
+    // 3 : compressed 圧縮済み
+    output     : 1,
+
+    csscomb    : false, // .csscomb.jsonの内容で整形するか
+    minify     : true,  // リリースビルドで圧縮するか否か
+    sourcemaps : true,  // sourcemapsの使用
+    plugins: [
+      $.autoprefixer({grid:true}), // ベンダープリフィックス付与
+      $.cssMqpacker({sort:true}),  // メディアクエリ記述をまとめる
+      $.postcssFlexbugsFixes(),    // Flexbox関連バグの修正
+      $.postcssCachebuster({type: 'checksum'}) // キャッシュ避けを付与する
+    ]
+  },
+
+  js: {
+    babel      : true, // トランスパイルするか否か
+    stripDebug : true, // リリースビルドでデバッグメッセージを除去するか否か
+    uglify     : true  // リリースビルドで圧縮するか否か
+  },
+
+  images: {
+    // 圧縮率
+    gif : 1,  // 1^3
+    jpg : 80, // 0^100
+    png : 80  // 0^100
+  }
+}
+```
+
 ## タスク
 
 ### server
@@ -78,7 +145,13 @@ CLIで以下を入力：
 
 ローカルに開発用のサーバを立て、ソースに変更があった場合はその内容を自動で反映するよう監視します。デフォルトで3000番のポートを使用しますが、埋まっていた場合は自動で空いているポートを探して使用します。
 
-`src/config.js`で開き方の指定や挙動の変更が出来ます。
+`src/config.js`で開き方の指定や挙動の変更が出来ます。使わないオプションはコメントアウトしておき、使用する時のみコメントアウトを解除します。その他必要なオプションは任意に追記出来ます。
+
+https://www.browsersync.io/docs/options
+
+* server/https
+
+httpではなく、httpsでサーバを起動します。
 
 * ghostMode
 
@@ -95,6 +168,15 @@ CLIで以下を入力：
 
 起動時に開くページを指定出来ます。
 
+* proxy
+
+Apacheなどの既存のサーバを介してbrowserSyncを立ち上げます。Wordpressなどの開発に導入する場合は、こちらを利用してください。
+※proxyオプションはserverオプションと排他的なので、`server/https`などの設定は読み込まれなくなります。
+
+* port
+
+デフォルトで3000番を使用しているポートを、指定した任意の番号を使用するようになります。
+
 ### ejs
 
 * EJSファイルをhtmlにコンパイルします。
@@ -109,6 +191,20 @@ ejsファイルの構文エラーでコンパイルが失敗した場合、出�
 |revision|`true`|画像やcss/jsのファイル指定時に`.jpg?rev`と書くと、ビルド時にハッシュを付与する|
 |prettier|`false`|HTML整形する。整形方法はoptionsで指定|
 
+### edge
+
+* Edgeファイルをhtmlにコンパイルします。
+
+ejsとは異なる思想のテンプレートエンジンで、`Laravel`で使用されている`Blade`や、`Python`で有名な`Jinja2`などといったテンプレートエンジンのような、ベースとなるレイアウトを拡張して構築するタイプのテンプレートエンジンです。
+https://edge.adonisjs.com/
+
+EJSと同等のオプションが使用出来ます。
+
+|オプション|デフォルト|内容|
+|:---|:---|:---|
+|ext|`html`||
+|revision|`true`|画像やcss/jsのファイル指定時に`.jpg?rev`と書くと、ビルド時にハッシュを付与する|
+|prettier|`false`|HTML整形する。整形方法はoptionsで指定|
 
 ### scss
 
@@ -168,6 +264,7 @@ ES6->ES5にトランスパイルをして出力します。
 
 |制作日|バージョン|内容|
 |:---|:---|:---|
+|2019/03/11|v4.2.0|EDGEテンプレートの実装、不要な処理の削除、コンフィグファイルの読み込み処理修正|
 |2019/01/14|v4.1.0|オプション指定など追加|
 |2019/01/05|v4.0.0|gulp4のリリースに合わせて書き直し|
 |2018/09/30|v3.0.0|gulpfile.jsの書き直し
