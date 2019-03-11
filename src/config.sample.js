@@ -1,5 +1,7 @@
 const config = {
 
+  version: '4.2.0',
+
   // 開発用サーバ設定
   server: {
 
