@@ -68,7 +68,7 @@ const project = {
       $.autoprefixer({grid:true}), // ベンダープリフィックス付与
       $.cssMqpacker({sort:true}),  // メディアクエリ記述をまとめる
       $.postcssFlexbugsFixes(),    // Flexbox関連バグの修正
-      $.postcssCachebuster({type: 'checksum'}) // キャッシュ避けを付与する
+      $.postcssCachebuster({type: 'checksum',imagesPath: dir.dist.slice(1)}) // キャッシュ避けを付与する
     ]
   },
 
