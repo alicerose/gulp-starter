@@ -6,7 +6,7 @@ body {
 }
 
 header {
-  z-index : z(header);
+  z-index: z(header);
 }
 
 footer {
@@ -22,5 +22,29 @@ section {
 }
 
 .blocks {
-  padding: .25em;
+  padding: 0.25em;
+}
+
+.hoge {
+  @include mq {
+    width: 100px;
+  }
+}
+
+.fuga {
+  @include mq(min) {
+    width: 200px;
+  }
+}
+
+.piyo {
+  @include mq(max, 1280) {
+    width: 300px;
+  }
+}
+
+.hogehoge {
+  @include mq(min, 320) {
+    width: 400px;
+  }
 }
