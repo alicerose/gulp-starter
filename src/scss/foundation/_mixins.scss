@@ -9,15 +9,9 @@
 //   @include mq(min, 1000){} // @media screen and (min-width: 1001px) {}
 // }
 
-@mixin mq($refer: max, $screen: $breakpoint){
-  $width: $screen;
-  $method: $refer;
+@mixin mq($method: max, $width: $breakpoint){
   @if($method == min) {
-    $width: $screen + 1;
-  }
-  @if type-of($refer) == number {
-    $width: $refer;
-    $method: max;
+    $width: $width + 1;
   }
   @media screen and (#{$method}-width: #{$width}px) {
     @content;
