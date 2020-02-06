@@ -1,6 +1,6 @@
 {
   "name": "gulp-boilerplate",
-  "version": "4.2.1",
+  "version": "4.3.0",
   "description": "gulpfile.js template for web development",
   "main": "index.js",
   "scripts": {
@@ -10,14 +10,6 @@
     "release": "NODE_ENV=production gulp release",
     "winrelease": "set NODE_ENV=production && gulp release"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://alice37@bitbucket.org/alice37/gulp.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/alice37/gulp#readme",
   "private": true,
   "browserslist": [
     "last 2 versions",
@@ -27,6 +19,7 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
     "autoprefixer": "^9.4.4",
+    "babel-loader": "^8.0.6",
     "browser-sync": "^2.26.3",
     "css-mqpacker": "^7.0.0",
     "gulp": "^4.0.0",
@@ -56,10 +49,13 @@
     "minimist": "^1.2.0",
     "postcss-cachebuster": "^0.1.6",
     "postcss-flexbugs-fixes": "^4.1.0",
-    "require-dir": "^1.2.0"
+    "require-dir": "^1.2.0",
+    "webpack": "^4.41.5",
+    "webpack-stream": "^5.2.1"
   },
   "dependencies": {
     "crypto": "^1.0.1",
-    "del": "^3.0.0"
+    "del": "^3.0.0",
+    "jquery": "^3.4.1"
   }
 }

@@ -7,7 +7,7 @@ const minimist = require('minimist')
 const util     = require('util')
 
 // gulp系統のパッケージ読み込み
-const {watch, series, parallel, task, src, dest} = require('gulp');
+const {watch, series, task, src, dest} = require('gulp');
 const $ = require('gulp-load-plugins')({
   DEBUG: false,
   pattern: [
@@ -15,7 +15,9 @@ const $ = require('gulp-load-plugins')({
     'postcss-*',
     'imagemin-*',
     'autoprefixer',
-    'css-mqpacker'
+    'css-mqpacker',
+    'webpack',
+    'webpack-stream'
   ],
   overridePattern: false
 })
@@ -35,6 +37,9 @@ const dir     = {
   // 画像出力先
   images : 'assets/images'
 }
+
+// 外部コンフィグファイルの読み込み
+const webpackConfig = require("./webpack.config");
 
 // プロジェクト設定
 const project = {
@@ -75,7 +80,8 @@ const project = {
   js: {
     babel      : true, // トランスパイルするか否か
     stripDebug : true, // リリースビルドでデバッグメッセージを除去するか否か
-    uglify     : true  // リリースビルドで圧縮するか否か
+    uglify     : true,  // リリースビルドで圧縮するか否か
+    webpack    : true
   },
 
   images: {
@@ -85,6 +91,9 @@ const project = {
     png : 80  // 0^100
   }
 }
+
+// Webpack使用判定
+project.js.methods = project.js.webpack ? 'webpack' : 'js'
 
 // 個人用設定ファイルの存在確認
 const configFile = {
@@ -261,6 +270,12 @@ task('js', () => {
   .pipe(browser.stream())
 })
 
+task('webpack', () => {
+  return $.webpackStream(webpackConfig, $.webpack)
+    .pipe(dest(dir.dist+dir.js))
+    .pipe(browser.stream())
+})
+
 // 画像圧縮
 task('images', () => {
   return src([dir.src + 'images/**/*'])
@@ -312,6 +327,7 @@ task('watch', (done) => {
   watch([dir.src + project.template + '/**/*'], task(project.template))
   watch([dir.src + 'scss/**/*'], task('sass'))
   watch([dir.src + 'js/**/*'], task('js'))
+  watch([dir.src + 'webpack/**/*'], task('webpack'))
   watch([dir.src + 'images/**/*'], task('images'))
   watch([dir.src + 'assets/**/*'], task('assets'))
   done()
@@ -322,7 +338,7 @@ task('build', series(
   'config',
   project.template,
   'sass',
-  'js',
+  project.js.methods,
   'images',
   'assets'
 ))
