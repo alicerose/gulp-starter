@@ -1,5 +1,5 @@
-const hoge = 'fuga'
+const hoge = 'fuga';
 
-const piyo = (hoge) => {
-  console.log('piyo')
-}
+const piyo = hoge => {
+  console.log('piyo');
+};

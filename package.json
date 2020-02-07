@@ -10,7 +10,7 @@
     "clean": "gulp clean",
     "release": "NODE_ENV=production gulp release",
     "winrelease": "set NODE_ENV=production && gulp release",
-    "lint": "npx eslint src --fix"
+    "lint": "eslint src --fix"
   },
   "private": true,
   "browserslist": [
