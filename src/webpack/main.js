@@ -6,3 +6,4 @@ import $ from "jquery";
 exportHoge(SOME_NUMBER);
 const text = $('header h1').text();
 alert(text);
+console.log('hogehogehoge')
