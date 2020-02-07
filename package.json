@@ -9,7 +9,8 @@
     "build": "gulp build",
     "clean": "gulp clean",
     "release": "NODE_ENV=production gulp release",
-    "winrelease": "set NODE_ENV=production && gulp release"
+    "winrelease": "set NODE_ENV=production && gulp release",
+    "lint": "npx eslint src --fix"
   },
   "private": true,
   "browserslist": [
@@ -23,6 +24,9 @@
     "babel-loader": "^8.0.6",
     "browser-sync": "^2.26.3",
     "css-mqpacker": "^7.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-changed": "^3.2.0",
@@ -50,6 +54,7 @@
     "minimist": "^1.2.0",
     "postcss-cachebuster": "^0.1.6",
     "postcss-flexbugs-fixes": "^4.1.0",
+    "prettier": "^1.19.1",
     "require-dir": "^1.2.0",
     "terser-webpack-plugin": "^2.3.4",
     "webpack": "^4.41.5",
