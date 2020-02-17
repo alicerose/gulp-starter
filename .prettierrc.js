@@ -6,5 +6,5 @@ module.exports = {
   singleQuote: true,
   indent: ['error', 2],
   arrowParens: 'avoid',
-  endOfLine: 'crlf',
+  endOfLine: 'auto',
 }
