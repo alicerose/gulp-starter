@@ -1,23 +1,19 @@
 const config = {
-
   version: '4.3.0',
 
   // 開発用サーバ設定
   server: {
-
-    server : {
-
+    server: {
       // サーバがhttpsに対応していればhttpsで開く
-      https : false
-
-    }
+      https: false,
+    },
 
     // trueでデバイス間のクリック・スクロールなども同期させる
-    , ghostMode : false
+    ghostMode: false,
 
     // external : プライベートIPでブラウザ起動
     // internal : localhostでブラウザ起動
-    , open : "internal"
+    open: 'internal',
 
     // デフォルトで開くパスを変更する場合はコメントアウトを解除して以下を修正
     // , startPath : '/'
@@ -28,9 +24,9 @@ const config = {
 
     // 任意のポートを指定したい場合はコメントアウトを解除（デフォルト 3000）
     //, port : '8888'
-  }
-}
+  },
+};
 
 module.exports = {
-  config: config
-}
+  config: config,
+};

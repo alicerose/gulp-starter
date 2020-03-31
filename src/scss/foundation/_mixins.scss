@@ -9,8 +9,8 @@
 //   @include mq(min, 1000){} // @media screen and (min-width: 1001px) {}
 // }
 
-@mixin mq($method: max, $width: $breakpoint){
-  @if($method == min) {
+@mixin mq($method: max, $width: $breakpoint) {
+  @if ($method == min) {
     $width: $width + 1;
   }
   @media screen and (#{$method}-width: #{$width}px) {
@@ -20,7 +20,7 @@
 
 // csshack
 @mixin ie11 {
-  @media all and (-ms-high-contrast:none\0) {
+  @media all and (-ms-high-contrast: none\0) {
     @content;
   }
 }
@@ -52,7 +52,7 @@
 }
 
 // hover
-@mixin hover($method:opacity, $value:0.7) {
+@mixin hover($method: opacity, $value: 0.7) {
   #{$method}: 1;
   transition: #{$method} 300ms ease;
   backface-visibility: hidden;
@@ -74,7 +74,7 @@
   outline: none;
   background: transparent;
   padding: 0;
-  @if($property == select) {
+  @if ($property == select) {
     &::-ms-expand {
       display: none;
     }
