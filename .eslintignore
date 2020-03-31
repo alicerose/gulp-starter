@@ -1,0 +1,7 @@
+# ignore list
+
+/node_modules/**
+/dist/**
+
+# excludes in src
+/src/lib/config.**

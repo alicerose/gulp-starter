@@ -1,23 +1,18 @@
 {
   "name": "gulp-boilerplate",
-  "version": "4.2.1",
+  "version": "4.3.0",
   "description": "gulpfile.js template for web development",
   "main": "index.js",
   "scripts": {
     "start": "gulp",
+    "start:production": "NODE_ENV=production gulp",
     "build": "gulp build",
     "clean": "gulp clean",
     "release": "NODE_ENV=production gulp release",
-    "winrelease": "set NODE_ENV=production && gulp release"
+    "winrelease": "set NODE_ENV=production && gulp release",
+    "lint:fix": "eslint src --fix",
+    "stylelint:fix": "prettier-stylelint --quiet --write src/scss/**/*.scss"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://alice37@bitbucket.org/alice37/gulp.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/alice37/gulp#readme",
   "private": true,
   "browserslist": [
     "last 2 versions",
@@ -27,8 +22,12 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
     "autoprefixer": "^9.4.4",
+    "babel-loader": "^8.0.6",
     "browser-sync": "^2.26.3",
     "css-mqpacker": "^7.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-changed": "^3.2.0",
@@ -56,10 +55,21 @@
     "minimist": "^1.2.0",
     "postcss-cachebuster": "^0.1.6",
     "postcss-flexbugs-fixes": "^4.1.0",
-    "require-dir": "^1.2.0"
+    "prettier": "^1.19.1",
+    "prettier-stylelint": "^0.4.2",
+    "require-dir": "^1.2.0",
+    "stylelint": "^13.0.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-standard": "^19.0.0",
+    "stylelint-scss": "^3.14.2",
+    "terser-webpack-plugin": "^2.3.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-stream": "^5.2.1"
   },
   "dependencies": {
     "crypto": "^1.0.1",
-    "del": "^3.0.0"
+    "del": "^3.0.0",
+    "jquery": "^3.4.1"
   }
 }
