@@ -52,7 +52,7 @@
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-pngquant": "^6.0.1",
     "imagemin-svgo": "^7.0.0",
-    "minimist": "^1.2.2",
+    "minimist": "^1.2.3",
     "postcss-cachebuster": "^0.1.6",
     "postcss-flexbugs-fixes": "^4.1.0",
     "prettier": "^1.19.1",
