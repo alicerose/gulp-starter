@@ -50,9 +50,7 @@ module.exports = {
   optimization: {
     minimizer: [
       new terserPlugin({
-        cache: false,
         parallel: true,
-        sourceMap: false,
         terserOptions: {
           compress: { drop_console: true },
         },
