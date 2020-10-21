@@ -11,8 +11,8 @@ export const gulpConfig = {
     // https://browsersync.io/docs/options#option-server
     server: {
       baseDir: 'dist',
-      index: 'start.html',
-      directory: true,
+      index: 'index.html',
+      directory: false,
     },
     // https://browsersync.io/docs/options#option-port
     // port: '3000',
@@ -22,6 +22,14 @@ export const gulpConfig = {
     // open: 'internal,
     // https://browsersync.io/docs/options#option-proxy
     // proxy: 'localhost:8080',
+  },
+  html: {
+    engine: 'ejs',
+    options: {
+      ejs: {
+        extension: 'html',
+      },
+    },
   },
   scss: {
     style: {
