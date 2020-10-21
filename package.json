@@ -13,7 +13,7 @@
   "private": true,
   "browserslist": [
     "last 2 versions",
-    "ie 8"
+    "ie 11"
   ],
   "devDependencies": {
     "@babel/core": "^7.12.3",
