@@ -30,6 +30,7 @@ export const gulpConfig = {
         extension: 'html',
       },
     },
+    revision: true,
   },
   scss: {
     style: {

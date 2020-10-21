@@ -6,18 +6,22 @@ import gulpIf from 'gulp-if';
 import plumber from 'gulp-plumber';
 import notify from 'gulp-notify';
 import rename from 'gulp-rename';
+import replace from 'gulp-replace';
+
 import ejs from 'gulp-ejs';
+
 import sass from 'gulp-sass';
 import sassGlob from 'gulp-sass-glob';
 import sourcemaps from 'gulp-sourcemaps';
 import postcss from 'gulp-postcss';
+
 import webpack from 'webpack';
 import webpackStream from 'webpack-stream';
 import webpackConfig from './webpack.config';
 
 /**
  * 設定内容を外部ファイルから取得
- * @type {{server: {server: {baseDir: string, index: string, directory: boolean}}, scss: {plugins: [*, *], style: {prod: {outputStyle: string}, dev: {outputStyle: string}}}, html: {engine: string, options: {ejs: {extension: string}}}, dir: {assets: string, src: string, dist: string}}}
+ * @type {{server: {server: {baseDir: string, index: string, directory: boolean}}, scss: {plugins: [{prepare(*=): {Once(*=): void}, postcssPlugin: string, options: *, browsers: *, info(*=): string}, *], style: {prod: {outputStyle: string}, dev: {outputStyle: string}}}, html: {engine: string, options: {ejs: {extension: string}}, revision: boolean}, dir: {assets: string, src: string, dist: string}}}
  */
 const config = gulpConfig;
 
@@ -32,6 +36,14 @@ const dir = gulpConfig.dir;
  * @type {boolean}
  */
 const isProduction = process.env.NODE_ENV === 'production';
+
+/**
+ * GITのコミットハッシュ
+ */
+const revision = process.env.GIT_COMMIT_HASH
+  ? process.env.GIT_COMMIT_HASH.slice(0, 8)
+  : null;
+console.log('build revision:', revision);
 
 /**
  * コンパイルエラー時のテンプレート
@@ -69,6 +81,16 @@ task('ejs', () => {
       rename({
         extname: `.${config.html.options.ejs.extension}`,
       })
+    )
+    .pipe(
+      gulpIf(
+        config.html.revision,
+        replace(
+          /\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g,
+          // !isProduction ? '.$1?rev=' + revision : '.$1'
+          '.$1?rev=' + revision
+        )
+      )
     )
     .pipe(dest(dir.dist))
     .pipe(browser.stream());
