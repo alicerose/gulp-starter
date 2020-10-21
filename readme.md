@@ -105,6 +105,7 @@ export const gulpConfig = {
         extension: 'html',
       },
     },
+    revision: true,
   },
   scss: {
     style: {
@@ -155,6 +156,10 @@ Apacheなどの既存のサーバを介してbrowserSyncを立ち上げます。
 ### ejs
 
 * EJSファイルをhtmlにコンパイルします。
+* ファイルの拡張子に `?rev=` がついているファイルに対して、Gitのコミットハッシュを付与します。
+    * 例：`foo.css?rev` -> `foo.css?rev=1q2w3e4r5t6y`
+    * キャッシュが残存して更新が反映されない状況を回避する用です。
+    * コンフィグファイルの `html.revision` をfalseにした場合は出力しません。
 
 ### edge
 
