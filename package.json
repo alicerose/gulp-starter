@@ -38,7 +38,7 @@
     "gulp-sass": "^4.1.0",
     "gulp-sass-glob": "^1.1.0",
     "gulp-sourcemaps": "^2.6.5",
-    "postcss": "^8.1.2",
+    "postcss": "^8.2.10",
     "postcss-flexbugs-fixes": "^4.2.1",
     "prettier": "^2.1.2",
     "terser-webpack-plugin": "^5.0.0",
@@ -50,6 +50,6 @@
     "jquery": "^3.5.1"
   },
   "peerDependencies": {
-    "postcss": "^8.1.2"
+    "postcss": "^8.2.10"
   }
 }
