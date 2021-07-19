@@ -8,13 +8,15 @@ export const gulpConfig = {
     dist: 'dist',
     assets: '/assets',
   },
+  // https://browsersync.io/docs/options#option-server
   server: {
-    // https://browsersync.io/docs/options#option-server
+    // 開発サーバを立ち上げる場合
     server: {
       baseDir: 'dist',
       index: 'index.html',
       directory: false,
     },
+    // 他サーバをプロクシする場合、以下をコメントアウト
     // https://browsersync.io/docs/options#option-port
     // port: '3000',
     // https://browsersync.io/docs/options#option-ghostMode
