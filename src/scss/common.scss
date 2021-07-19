@@ -1,10 +1,12 @@
-// vender
-@import "vender/normalize";
+// vendor
+@import 'vendor/normalize';
 
 // foundation
-@import "foundation/variables";
-@import "foundation/functions";
-@import "foundation/mixins";
+@import 'foundation/variables';
+@import 'foundation/functions';
+@import 'foundation/mixins';
 
 // components
-@import "object/**";
+@import 'objects/utilities/**';
+@import 'objects/components/**';
+@import 'objects/projects/**';

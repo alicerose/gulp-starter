@@ -1,5 +1,6 @@
 import autoprefixer from 'autoprefixer';
 import flexBugFixes from 'postcss-flexbugs-fixes';
+import stylelint from 'stylelint';
 
 export const gulpConfig = {
   dir: {
@@ -37,6 +38,6 @@ export const gulpConfig = {
       dev: { outputStyle: 'expanded' },
       prod: { outputStyle: 'compressed' },
     },
-    plugins: [autoprefixer({ grid: true }), flexBugFixes()],
+    plugins: [autoprefixer({ grid: true }), flexBugFixes(), stylelint],
   },
 };
