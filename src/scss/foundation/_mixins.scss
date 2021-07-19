@@ -8,7 +8,6 @@
 //   @include mq(min) {} // @media screen and (min-width: 769px) {}
 //   @include mq(min, 1000){} // @media screen and (min-width: 1001px) {}
 // }
-
 @mixin mq($method: max, $width: $breakpoint) {
   @if ($method == min) {
     $width: $width + 1;
@@ -79,4 +78,13 @@
       display: none;
     }
   }
+}
+
+// objectFit
+// IE11でpolyfill(https://github.com/fregante/object-fit-images) を使うときのことを考えてmixin化
+@mixin objectFit($method: contain) {
+  object-fit: $method;
+  object-position: center;
+  font-family: 'object-fit: #{$method};';
+  @content;
 }

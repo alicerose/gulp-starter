@@ -1,3 +1,5 @@
+// 独自関数
+
 // z-index
 // variablesで定義した順にz-indexを付与する
 // .hoge {
@@ -5,4 +7,20 @@
 // }
 @function z($name) {
   @return index($z-map, $name);
+}
+
+// line-height
+@function line($value, $fontSize) {
+  @return $value / $fontSize;
+}
+
+// letter-spacing
+@function spacing($value) {
+  @return $value / 1000 * 1em;
+}
+
+
+// vw
+@function vw($value) {
+  @return $value / $breakpoint * 2 * 100vw;
 }
