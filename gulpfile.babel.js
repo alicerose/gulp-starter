@@ -10,7 +10,10 @@ import replace from 'gulp-replace';
 
 import ejs from 'gulp-ejs';
 
-import sass from 'gulp-sass';
+import dartSass from 'sass';
+import gulpSass from 'gulp-sass';
+const sass = gulpSass(dartSass);
+
 import sassGlob from 'gulp-sass-glob';
 import sourcemaps from 'gulp-sourcemaps';
 import postcss from 'gulp-postcss';
@@ -73,6 +76,9 @@ task('reload', done => {
   done();
 });
 
+/**
+ * EJSコンパイル
+ */
 task('ejs', () => {
   return src(dir.src + '/ejs/**/[^_]*.ejs')
     .pipe(plumber(errorTemplate()))

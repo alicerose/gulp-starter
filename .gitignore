@@ -3,8 +3,6 @@
 
 node_modules
 npm-debug.log
-src/config.js
-dist/
 
 # OS generated files #
 ######################
@@ -38,3 +36,7 @@ nbproject/*
 .vscode
 # Sass preprocessor
 .sass-cache/
+
+# Project specific files #
+#######################
+dist/
