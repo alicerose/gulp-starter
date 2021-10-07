@@ -1,13 +1,19 @@
-// media queries
-// 第一引数省略時       : 640px
-// 第二引数省略時の挙動 : max-width
-// 第二引数にmin        : min-width
-// 第二引数がminの場合、第一引数に+1される
-// .hoge {
-//   @include mq {} // @media screen and (max-width: 768px) {}
-//   @include mq(min) {} // @media screen and (min-width: 769px) {}
+// --------------------------------
+// 独自mixins
+// --------------------------------
+
+// メディアクエリ
+// 第一引数省略時
+//   ブレイクポイント変数
+// 第二引数省略時の挙動
+//   max-width
+// 第一引数にmin
+//   min-width
+//   第二引数がminの場合、第一引数に+1される
+// コンパイルサンプル
+//   @include mq {}           // @media screen and (max-width: 768px) {}
+//   @include mq(min) {}      // @media screen and (min-width: 769px) {}
 //   @include mq(min, 1000){} // @media screen and (min-width: 1001px) {}
-// }
 @mixin mq($method: max, $width: $breakpoint) {
   @if ($method == min) {
     $width: $width + 1;
@@ -58,6 +64,7 @@
   &:hover {
     @include mq(min) {
       #{$method}: $value;
+      @content;
     }
   }
 }

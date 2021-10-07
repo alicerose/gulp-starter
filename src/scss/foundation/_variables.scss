@@ -1,9 +1,19 @@
-// screensize
-$sm: 375;
-$md: 640;
-$lg: 1024;
-$xl: 1280;
-$breakpoint: 768;
+// --------------------------------
+// 独自変数
+// 色関連はcolorsへ
+// --------------------------------
 
-// z-map
-$z-map: (header, footer);
+// Screen Size
+$sm         : 375;
+$md         : 640;
+$lg         : 1024;
+$xl         : 1280;
+$breakpoint : 768;
+$design     : 750;
+
+// Mapping Z-index Layer
+$z-indexes: (
+  __,
+  header,
+  footer
+);

@@ -1,20 +1,19 @@
 {
   "name": "gulp-boilerplate",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "description": "gulpfile.js template for web development",
   "main": "index.js",
   "scripts": {
-    "start": "gulp",
+    "start": "GIT_COMMIT_HASH=$(git rev-parse HEAD) gulp",
     "build": "GIT_COMMIT_HASH=$(git rev-parse HEAD) gulp build",
     "build:production": "NODE_ENV=production GIT_COMMIT_HASH=$(git rev-parse HEAD) gulp build",
     "clean": "gulp clean",
     "lint:fix": "eslint src --fix",
-    "stylelint:css": "stylelint --fix **/*.{css,scss,sass}"
+    "stylelint:scss": "stylelint --fix **/*.{scss,sass}"
   },
   "private": true,
   "browserslist": [
-    "last 2 versions",
-    "ie 11"
+    "last 2 versions"
   ],
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -45,6 +44,7 @@
     "sass": "^1.35.2",
     "stylelint": "^13.13.1",
     "stylelint-config-prettier": "^8.0.2",
+    "stylelint-config-recess-order": "^2.5.0",
     "stylelint-config-recommended": "^5.0.0",
     "stylelint-config-recommended-scss": "^4.3.0",
     "stylelint-prettier": "^1.2.0",

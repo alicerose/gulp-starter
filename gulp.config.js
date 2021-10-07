@@ -1,6 +1,5 @@
 import autoprefixer from 'autoprefixer';
 import flexBugFixes from 'postcss-flexbugs-fixes';
-import stylelint from 'stylelint';
 
 export const gulpConfig = {
   dir: {
@@ -10,36 +9,54 @@ export const gulpConfig = {
   },
   // https://browsersync.io/docs/options#option-server
   server: {
-    // 開発サーバを立ち上げる場合
     server: {
+      // ホストするディレクトリ
       baseDir: 'dist',
+      // インデックスファイル名
       index: 'index.html',
+      //
       directory: false,
     },
-    // 他サーバをプロクシする場合、以下をコメントアウト
+    // 使用するポート
     // https://browsersync.io/docs/options#option-port
-    // port: '3000',
+    port: '3000',
+    // 操作を追従させるか
     // https://browsersync.io/docs/options#option-ghostMode
-    // ghostMode: false,
+    ghostMode: {
+      clicks: true,
+      forms: true,
+      scroll: false,
+    },
+    // サーバの立ち上げ方
+    // 'local' localhostを使用する
+    // 'external' IPを使用する
     // https://browsersync.io/docs/options#option-open
-    // open: 'internal,
+    open: 'local',
+    // プロクシを通す
+    // WordPressなどを介する場合はホストを指定
     // https://browsersync.io/docs/options#option-proxy
-    // proxy: 'localhost:8080',
+    proxy: null,
   },
   html: {
+    // テンプレートエンジン
     engine: 'ejs',
+    // テンプレートエンジンごとのオプション
     options: {
       ejs: {
         extension: 'html',
       },
     },
-    revision: true,
+    // gitハッシュパラメータを置換するか
+    revision: {
+      enable: true,
+      target: 'js|css|gif|jpg|jpeg|png|svg',
+    },
   },
   scss: {
     style: {
       dev: { outputStyle: 'expanded' },
       prod: { outputStyle: 'compressed' },
     },
-    plugins: [autoprefixer({ grid: true }), flexBugFixes(), stylelint],
+    plugins: [autoprefixer({ grid: true }), flexBugFixes()],
   },
 };

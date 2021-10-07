@@ -1,4 +1,6 @@
-// フォント周りの設定ファイル
+// --------------------------------
+// フォント関連
+// --------------------------------
 
 // fontfamily
 $fontfamily: 'Roboto', -apple-system, 'Helvetica Neue', 'ヒラギノ角ゴ Pro W3',
@@ -6,10 +8,11 @@ $fontfamily: 'Roboto', -apple-system, 'Helvetica Neue', 'ヒラギノ角ゴ Pro 
 'MS PGothic', sans-serif;
 
 // font weight
-$thin: 100;
-$extra-light: 200;
-$light: 300;
-$regular: 400;
-$medium: 500;
-$bold: 700;
-$black: 900;
+$thin        : 100;
+$extra-light : 200;
+$light       : 300;
+$regular     : 400;
+$medium      : 500;
+$bold        : 700;
+$semiBold    : 800;
+$black       : 900;
