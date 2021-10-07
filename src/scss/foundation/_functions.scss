@@ -38,7 +38,7 @@
 @function mdColor($color, $index: 10) {
   $list: map-get($md-colors, $color);
   @if $color == Black or $color == White {
-    @return $list
+    @return $list;
   } @else {
     $key: nth($md-color-keys, $index);
     @return map-get($list, $key);
