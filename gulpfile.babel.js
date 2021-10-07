@@ -24,7 +24,7 @@ import webpackConfig from './webpack.config';
 
 /**
  * 設定内容を外部ファイルから取得
- * @type {{server: {server: {baseDir: string, index: string, directory: boolean}}, scss: {plugins: [{prepare(*=): {Once(*=): void}, postcssPlugin: string, options: *, browsers: *, info(*=): string}, *], style: {prod: {outputStyle: string}, dev: {outputStyle: string}}}, html: {engine: string, options: {ejs: {extension: string}}, revision: boolean}, dir: {assets: string, src: string, dist: string}}}
+ * @type {{server: {server: {baseDir: string, index: string, directory: boolean}, proxy: null, port: string, ghostMode: {scroll: boolean, clicks: boolean, forms: boolean}, open: boolean}, scss: {plugins: [*|(Plugin & autoprefixer.ExportedAPI), {postcssPlugin: string, Once: function(*, *): void}, import('postcss').Plugin<*>&Partial<*>], style: {prod: {outputStyle: string}, dev: {outputStyle: string}}}, html: {engine: string, options: {ejs: {extension: string}}, revision: {enable: boolean, target: string}}, dir: {assets: string, src: string, dist: string}}}
  */
 const config = gulpConfig;
 
@@ -89,13 +89,10 @@ task('ejs', () => {
       })
     )
     .pipe(
-      gulpIf(
-        config.html.revision,
-        replace(
-          /\.(js|css|gif|jpg|jpeg|png|svg)\?rev/g,
-          // !isProduction ? '.$1?rev=' + revision : '.$1'
-          '.$1?rev=' + revision
-        )
+      replace(
+        new RegExp(`.(${config.html.revision.target})\?rev`, 'g'),
+        // !isProduction ? '.$1?rev=' + revision : '.$1'
+        config.html.revision.enable && revision ? '$1?rev=' + revision : '$1'
       )
     )
     .pipe(dest(dir.dist))

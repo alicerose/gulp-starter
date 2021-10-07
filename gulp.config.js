@@ -39,13 +39,19 @@ export const gulpConfig = {
     proxy: null,
   },
   html: {
+    // テンプレートエンジン
     engine: 'ejs',
+    // テンプレートエンジンごとのオプション
     options: {
       ejs: {
         extension: 'html',
       },
     },
-    revision: true,
+    // gitハッシュパラメータを置換するか
+    revision: {
+      enable: true,
+      target: 'js|css|gif|jpg|jpeg|png|svg',
+    },
   },
   scss: {
     style: {

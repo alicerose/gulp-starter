@@ -4,7 +4,7 @@
   "description": "gulpfile.js template for web development",
   "main": "index.js",
   "scripts": {
-    "start": "gulp",
+    "start": "GIT_COMMIT_HASH=$(git rev-parse HEAD) gulp",
     "build": "GIT_COMMIT_HASH=$(git rev-parse HEAD) gulp build",
     "build:production": "NODE_ENV=production GIT_COMMIT_HASH=$(git rev-parse HEAD) gulp build",
     "clean": "gulp clean",
