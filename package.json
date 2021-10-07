@@ -9,12 +9,11 @@
     "build:production": "NODE_ENV=production GIT_COMMIT_HASH=$(git rev-parse HEAD) gulp build",
     "clean": "gulp clean",
     "lint:fix": "eslint src --fix",
-    "stylelint:css": "stylelint --fix **/*.{css,scss,sass}"
+    "stylelint:scss": "stylelint --fix **/*.{scss,sass}"
   },
   "private": true,
   "browserslist": [
-    "last 2 versions",
-    "ie 11"
+    "last 2 versions"
   ],
   "devDependencies": {
     "@babel/core": "^7.14.6",

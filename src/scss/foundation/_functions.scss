@@ -14,17 +14,17 @@
 
 // line-height
 @function line($value, $fontSize) {
-  @return $value / $fontSize;
+  @return math.div($value, $fontSize);
 }
 
 // letter-spacing
 @function spacing($value) {
-  @return $value / 1000 * 1em;
+  @return math.div($value, 1000 * 1em)
 }
 
 // vw
 @function vw($value) {
-  @return $value / $design * 2 * 100vw;
+  @return math.div($value, $design * 2 * 100vw);
 }
 
 // Material Design Colors
