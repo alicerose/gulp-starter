@@ -1,4 +1,7 @@
+// --------------------------------
 // 独自関数
+// --------------------------------
+@use 'sass:math';
 
 // z-index
 // variablesで定義した順にz-indexを付与する
@@ -6,7 +9,7 @@
 //   z-index: z(fuga); // z-index: 1;
 // }
 @function z($name) {
-  @return index($z-map, $name);
+  @return index($z-indexes, $name);
 }
 
 // line-height
@@ -19,8 +22,8 @@
   @return $value / 1000 * 1em;
 }
 
-
 // vw
 @function vw($value) {
-  @return $value / $breakpoint * 2 * 100vw;
+  @return $value / $design * 2 * 100vw;
+
 }
