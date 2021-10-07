@@ -25,5 +25,22 @@
 // vw
 @function vw($value) {
   @return $value / $design * 2 * 100vw;
+}
 
+// Material Design Colors
+// Material Design準拠のパレットを扱う
+// https://material.io/design/color/the-color-system.html#tools-for-picking-colors
+// $color
+//   カラー名称
+// $index
+//   1〜10がベースカラー
+//   11〜14がAltカラー（存在しない場合あり）
+@function mdColor($color, $index: 10) {
+  $list: map-get($md-colors, $color);
+  @if $color == Black or $color == White {
+    @return $list
+  } @else {
+    $key: nth($md-color-keys, $index);
+    @return map-get($list, $key);
+  }
 }
