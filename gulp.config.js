@@ -59,4 +59,7 @@ export const gulpConfig = {
     },
     plugins: [autoprefixer({ grid: true }), flexBugFixes()],
   },
+  js: {
+    typescript: true,
+  },
 };

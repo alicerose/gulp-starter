@@ -24,7 +24,7 @@ import webpackConfig from './webpack.config';
 
 /**
  * 設定内容を外部ファイルから取得
- * @type {{server: {server: {baseDir: string, index: string, directory: boolean}, proxy: null, port: string, ghostMode: {scroll: boolean, clicks: boolean, forms: boolean}, open: boolean}, scss: {plugins: [*|(Plugin & autoprefixer.ExportedAPI), {postcssPlugin: string, Once: function(*, *): void}, import('postcss').Plugin<*>&Partial<*>], style: {prod: {outputStyle: string}, dev: {outputStyle: string}}}, html: {engine: string, options: {ejs: {extension: string}}, revision: {enable: boolean, target: string}}, dir: {assets: string, src: string, dist: string}}}
+ * @type {{server: {server: {baseDir: string, index: string, directory: boolean}, proxy: null, port: string, ghostMode: {scroll: boolean, clicks: boolean, forms: boolean}, open: string}, scss: {plugins: [*|(Plugin & autoprefixer.ExportedAPI),{postcssPlugin: string, Once: function(*, *): void}], style: {prod: {outputStyle: string}, dev: {outputStyle: string}}}, js: {typescript: boolean}, html: {engine: string, options: {ejs: {extension: string}}, revision: {enable: boolean, target: string}}, dir: {assets: string, src: string, dist: string}}}
  */
 const config = gulpConfig;
 
@@ -148,7 +148,8 @@ task('assets', () => {
 task('watch', done => {
   watch(dir.src + `/${config.html.engine}/**/*`, task(config.html.engine));
   watch(dir.src + '/scss/**/*.scss', task('scss'));
-  watch(dir.src + '/webpack/**/*.js', task('js'));
+  watch(dir.src + '/js/**/*.js', task('js'));
+  watch(dir.src + '/ts/**/*.ts', task('js'));
   watch(dir.src + '/images/**/*.*', task('images'));
   watch(dir.src + '/assets/**/*.*', task('assets'));
   watch(dir.dist + '/**/*.php', task('reload'));
