@@ -1,3 +1,5 @@
+@use 'variables' as var;
+
 // --------------------------------
 // 独自mixins
 // --------------------------------
@@ -14,7 +16,7 @@
 //   @include mq {}           // @media screen and (max-width: 768px) {}
 //   @include mq(min) {}      // @media screen and (min-width: 769px) {}
 //   @include mq(min, 1000){} // @media screen and (min-width: 1001px) {}
-@mixin mq($method: max, $width: $breakpoint) {
+@mixin mq($method: max, $width: var.$breakpoint) {
   @if ($method == min) {
     $width: $width + 1;
   }
@@ -75,11 +77,11 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  padding: 0;
+  background: transparent;
   border: none;
   border-radius: 0;
   outline: none;
-  background: transparent;
-  padding: 0;
   @if ($property == select) {
     &::-ms-expand {
       display: none;
