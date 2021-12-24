@@ -1,10 +1,9 @@
-@use 'sass:math';
-@use 'variables' as var;
-@use '../vendor/mdColors' as md;
-
 // --------------------------------
 // 独自関数
 // --------------------------------
+@use 'sass:math';
+@use 'variables' as var;
+@use '../vendor/mdColors' as md;
 
 // z-index
 // variablesで定義した順にz-indexを付与する
@@ -46,11 +45,11 @@
 //   1〜10がベースカラー
 //   11〜14がAltカラー（存在しない場合あり）
 @function mdColor($color, $index: 10) {
-  $list: map-get(md.$md-colors, $color);
+  $list: map-get(md.$colors, $color);
   @if $color == Black or $color == White {
     @return $list;
   } @else {
-    $key: nth(md.$md-color-keys, $index);
+    $key: nth(md.$color-keys, $index);
     @return map-get($list, $key);
   }
 }

@@ -1,5 +1,6 @@
 // --------------------------------
 // 色変数を定義
 // --------------------------------
+@use 'functions' as f;
 
-$color-text: mdColor(Gray, 10);
+$text: f.mdColor(Gray, 10);

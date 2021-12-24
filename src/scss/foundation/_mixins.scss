@@ -1,8 +1,7 @@
-@use 'variables' as var;
-
 // --------------------------------
 // 独自mixins
 // --------------------------------
+@use 'variables' as var;
 
 // メディアクエリ
 // 第一引数省略時
@@ -77,11 +76,11 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  padding: 0;
-  background: transparent;
   border: none;
   border-radius: 0;
   outline: none;
+  background: transparent;
+  padding: 0;
   @if ($property == select) {
     &::-ms-expand {
       display: none;

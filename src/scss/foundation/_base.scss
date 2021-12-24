@@ -1,8 +1,13 @@
+@use 'global' as g;
+
 // --------------------------------
 // サイト全体の基底設定
 // --------------------------------
 
-* {
-  color: $color-text;
-  box-sizing: border-box;
+html, body {
+  color: g.$colors-text;
+  font: {
+    family: g.$font-serif;
+    size: g.minvw(32,16);
+  }
 }

@@ -1,17 +1,8 @@
 // vendor
-@import 'vendor/normalize';
-@import 'vendor/mdColors';
+//@use 'vendor/normalize';
+@use 'vendor/remedy';
 
 // foundation
-@import 'foundation/font';
-@import 'foundation/variables';
-@import 'foundation/functions';
-@import 'foundation/mixins';
-@import 'foundation/colors';
-
-@import 'foundation/base';
+@use 'foundation/base';
 
 // components
-@import 'objects/utilities/**';
-@import 'objects/components/**';
-@import 'objects/projects/**';

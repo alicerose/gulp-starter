@@ -1,25 +1,3 @@
-<%
-
-  const nav = [
-    {label : "リンク", href:"#"},
-    {label : "外部サイト", href:"https://example.com", external:true}
-  ];
-
-%>
-
-    <header>
-      <h1>header</h1>
-      <nav>
-        <ul>
-          <% for(i=0;i<nav.length;i++) { %>
-          <li>
-            <a href="<%= nav[i].href %>"
-              <% if(nav[i].external) {%> target="_blank"<% } %>
-            >
-            <%= nav[i].label %><%= i %>
-            </a>
-          </li>
-          <% } %>
-        </ul>
-      </nav>
-    </header>
+<header>
+    <h1>Document</h1>
+</header>
