@@ -14,18 +14,19 @@ export const gulpConfig = {
       baseDir: 'dist',
       // インデックスファイル名
       index: 'index.html',
-      //
+      // ディレクトリ一覧を表示するか
       directory: false,
     },
     // 使用するポート
     // https://browsersync.io/docs/options#option-port
-    port: '3000',
+    port: 3000,
     // 操作を追従させるか
     // https://browsersync.io/docs/options#option-ghostMode
     ghostMode: {
       clicks: true,
       forms: true,
-      scroll: false,
+      scroll: true,
+      location: true,
     },
     // サーバの立ち上げ方
     // 'local' localhostを使用する
@@ -36,6 +37,10 @@ export const gulpConfig = {
     // WordPressなどを介する場合はホストを指定
     // https://browsersync.io/docs/options#option-proxy
     proxy: null,
+    // 起動時のパスを指定する
+    // デフォルトはnull
+    // https://browsersync.io/docs/options#option-startPath
+    startPath: null,
   },
   html: {
     // テンプレートエンジン
