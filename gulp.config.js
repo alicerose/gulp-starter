@@ -25,7 +25,7 @@ export const gulpConfig = {
     ghostMode: {
       clicks: true,
       forms: true,
-      scroll: false,
+      scroll: true,
     },
     // サーバの立ち上げ方
     // 'local' localhostを使用する
